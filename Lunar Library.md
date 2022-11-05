@@ -78,7 +78,7 @@ Tab:AddToggleButton({
   Default = false
 })
 
-print(tostring(lunarLib.Flags["MyTestFlag"])) --For boolean flags, you may have to use the integrated-into-lua tostring() function to convert the boolean into a string.  
+print(tostring(lunarLib.Flags["MyTestFlag"].Value)) --For boolean flags, you may have to use the integrated-into-lua tostring() function to convert the boolean into a string.  
 ```
 `OUTPUT:`
 ```
