@@ -4,7 +4,7 @@
 
     Releasing soon.
 
-    SCRIPTS FROM scriptblox.com
+    SCRIPTS FROM https://scriptblox.com
 
     CONTACT lunaR_nicK#6800 ON DISCORD FOR SCRIPT REMOVAL!
 
@@ -13,7 +13,6 @@
 local scripts = {}
 
 local tags = {
-	"KeySystem",
 	"Patched",
 	"PositiveReviews",
 	"ProjectLunar",
@@ -21,17 +20,14 @@ local tags = {
 	"ScriptLoader",
 	"VerifiedCreator",
 	"VerifiedScript",
-	"Universal",
 	"New!",
 	"CMD",
 }
 
 scripts.UnfairHub = {
 	Name = "unfair Hub",
-	Description = "No description",
-	Script = [[
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/rblxscriptsnet/unfair/main/rblxhub.lua'),true))()	
-]],
+	Description = "Get an unfair advantage in 47+ games with this amazing hub by unfair!",
+	LoadstringScript = "loadstring(game:HttpGet(('https://raw.githubusercontent.com/rblxscriptsnet/unfair/main/rblxhub.lua'),true))()",
 	SupportedGames = {
 		6516141723,
 		9872472334,
@@ -80,10 +76,11 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/rblxscriptsnet/unfai
 		6172932937,
 		9264596435,
 		2413927524,
-
 	},
+	KeySys = false,
 	MultipleGames = true,
 	Creator = "unfair",
+	Universal = false,
 	Tags = {
 		"PositiveReviews",
 		"VerifiedScript",
@@ -94,13 +91,13 @@ loadstring(game:HttpGet(('https://raw.githubusercontent.com/rblxscriptsnet/unfai
 scripts.LunarAIDOORS = {
 	Name = "Lunar AI // DOORS",
 	Description = "Powered by Lunar itself, use Lunar AI in DOORS, the popular horror game created by the development team at LSPLASH, to get an easy win while helping others in the process.",
-	Script = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/lunarAI/main/mainNoUIraw.lua"))()	
-]],
+	LoadstringScript = "loadstring(game:HttpGet('https://raw.githubusercontent.com/probablYnicKxD/lunarAI/main/mainNoUIraw.lua'))()",
 	SupportedGames = {
 		6516141723,
 	},
+	KeySys = true,
 	MultipleGames = false,
+	Universal = false,
 	Creator = "probablYnicK",
 	Tags = {
 		"VerifiedCreator",
@@ -113,17 +110,16 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/lunarA
 scripts.EvadeReal_King = {
 	Name = "King - Evade",
 	Description = "Get an amazing advantage in the popular nextbot game Evade with this amazing script by Real_King. Verified and tested by nicK.",
-	Script = [[
-loadstring(game:HttpGet('https://raw.githubusercontent.com/zReal-King/Evade/main/Main.lua'))()	
-]],
+	LoadstringScript = "loadstring(game:HttpGet('https://raw.githubusercontent.com/zReal-King/Evade/main/Main.lua'))()",
 	SupportedGames = {
 		9872472334,
 	},
+	KeySys = true,
 	MultipleGames = false,
+	Universal = false,
 	Creator = "Real_King",
 	Tags = {
 		"VerifiedScript",
-		"KeySystem",
 		"PositiveReviews",
 		"VerifiedCreator",
 	}
@@ -132,13 +128,13 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/zReal-King/Evade/main
 scripts.Vynixius_DOORS = {
 	Name = "Vynixius",
 	Description = "Destroy the entities and conquer door 100 in DOORS by LSPLASH with this amazing script by RegularVynixu!",
-	Script = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Doors/Script.lua"))()
-]],
+	LoadstringScript = "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Doors/Script.lua",
 	SupportedGames = {
 		6516141723,
 	},
+	KeySys = false,
 	MultipleGames = false,
+	Universal = false,
 	Creator = "RegularVynixu",
 	Tags = {
 		"VerifiedScript",
@@ -150,11 +146,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Vynixiu
 scripts.InfiniteYield = {
 	Name = "Infinite Yield",
 	Description = "With over 350+ commands, Infinite Yield is one of the best FE command line scripts for Roblox, and you can execute it right here, right now on LunarHub.",
-	Script = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-]],
-	SupportedGames = {"UNIVERSAL"},
+	LoadstringScript = "loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()",
+	SupportedGames = {},
+	KeySys = false,
 	MultipleGames = true,
+	Universal = true,
 	Creator = "EdgeIY",
 	Tags = {
 		"VerifiedScript",
@@ -167,18 +163,34 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/
 scripts.TestScript = {
 	Name = "LunarHub Test Script",
 	Description = "This is a test script for LunarHub. If you are in a public release of this script and you can see this script, please contact lunaR_nicK#6800 on Discord, or report it in the Project Lunar Discord server.",
-	Script = [[
-print("Successfully ran the test script for LunarHub!")
-warn("This is a warning test!")
-]],
-	SupportedGames = {"UNIVERSAL"},
+	LoadstringScript = "loadstring(game:HttpGet('https://pastebin.com/raw/nRzYiwuL'))()",
+	SupportedGames = {},
 	MultipleGames = true,
+	Universal = true,
+	KeySys = false,
 	Creator = "probablYnicK",
 	Tags = {
 		"VerifiedScript",
 		"VerifiedCreator",
 		"PositiveReviews",
 		"New"
+	}
+}
+
+scripts.CMDX = {
+	Name = "CMDX",
+	Description = "With over 600+ commands, CMDX is one of the BEST command line scripts on Roblox. Some say it's better than Infinite Yield! Made by a development team, it's guaranteed to get you an advantage in every game.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source"))()',
+	SupportedGames = {},
+	MultipleGames = true,
+	Universal = true,
+	KeySys = false,
+	Creator = "CMD-X Development Team",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+		"CMD",
 	}
 }
 
