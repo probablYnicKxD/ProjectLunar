@@ -1242,7 +1242,12 @@ local function promptGameDetection()
 	_tween:Play()
 
 	ui.Thumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. game.PlaceId .. "&w=768&h=432"
-	ui.Layer.Subtitle.Text = "LunarHub has a script for " .. game.Name .. "! Press Execute or tap 'Y' on your keyboard to execute it!"
+	
+	if bestScript.Universal == true then
+		ui.Layer.Subtitle.Text = "LunarHub couldn't find a script for " .. game.Name .. ", but we found a universal script you might like! Press Execute or tap 'Y' on your keyboard to execute it!"
+	else
+		ui.Layer.Subtitle.Text = "LunarHub has a script for " .. game.Name .. "! Press Execute or tap 'Y' on your keyboard to execute it!"
+	end
 
 	if bestScript.KeySys == true then
 		ui.Layer.KeySystem.Visible = true
