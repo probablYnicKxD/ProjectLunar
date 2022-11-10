@@ -1003,6 +1003,22 @@ local function refreshScriptLibrary()
 		new.ScriptName.Text = libraryScript.Name
 		new.ScriptDescription.Text = libraryScript.Description
 		new.ScriptAuthor.Text = "created by " .. libraryScript.Creator
+		
+		local scriptTags = new.Tags
+		
+		for i, already in pairs(scriptTags) do
+			if already:IsA("Frame") and already.Name ~= "UIListLayout" and already.Name ~= "Placeholder" then
+				already.Visible = false
+			end
+		end
+		
+		for i, tag in pairs(libraryScript.Tags) do
+			local tagInstance = scriptTags:FindFirstChild(tag)
+			
+			if tagInstance then
+				tagInstance.Visible = true
+			end
+		end
 
 		if libraryScript.Universal == true then
 			new.Universal.Visible = true
