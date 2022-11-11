@@ -210,4 +210,20 @@ scripts.SimpleSpy = {
 	}
 }
 
+scripts.DexExplorer = {
+	Name = "Dex Explorer",
+	Description = "Roblox's most popular instance explorer for every single game on Roblox. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://pastebin.com/raw/fPP8bZ8Z"))()',
+	SupportedGames = {},
+	MultipleGames = true,
+	Universal = true,
+	KeySys = false,
+	Creator = "Dex",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
