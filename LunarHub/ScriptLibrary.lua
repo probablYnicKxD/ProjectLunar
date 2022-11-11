@@ -194,4 +194,20 @@ scripts.CMDX = {
 	}
 }
 
+scripts.SimpleSpy = {
+	Name = "SimpleSpy",
+	Description = "One of the most popular remote loggers on Roblox. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()',
+	SupportedGames = {},
+	MultipleGames = true,
+	Universal = true,
+	KeySys = false,
+	Creator = "exx",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
