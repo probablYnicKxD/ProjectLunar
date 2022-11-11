@@ -1,5 +1,7 @@
 local quickPlayGames = {}
 
+quickPlayGames.Games = {}
+
 function quickPlayGames:JoinGame(gameID, jobID)
     if jobID then
         print("LunarHub // Joining server with server ID: " .. jobID .. "...")
@@ -14,7 +16,7 @@ function quickPlayGames:AddGame(name, gameID)
     if gameID == 0 then return end
 
     local success,errMsg = pcall(function()
-        quickPlayGames[name] = {
+        quickPlayGames.Games[name] = {
             Name = name,
             GameID = gameID
         }
@@ -44,13 +46,13 @@ function quickPlayGames:GetGamePlayers(gameID)
     return plrs[0].playing
 end
 
-local function addGame(name gameID)
+local function addGame(name, gameID)
     return quickPlayGames:AddGame(name, gameID)
 end
 
 addGame("DOORS 👁", 6516141723)
 addGame("Evade", 9872472334)
-addGame("Adopt Me!", 0) --unknown game id as of now, getting it later because am lazy
+addGame("Adopt Me!", 0) --getting next script upd because am lazy 💀
 addGame("Blox Fruits", 2753915549)
 addGame("Da Hood", 2788229376)
 addGame("Prison Life", 155615604)
