@@ -12,6 +12,17 @@
 
 local bootTime = os.time()
 
+function getObjects(a) -- credits to the dex explorer devs for this function, it's faster than game:GetObjects(a)
+    local Objects = {}
+    if a then
+        local b = InsertService:LoadLocalAsset(a)
+        if b then 
+            table_insert(Objects, b) 
+        end
+    end
+    return Objects
+end
+
 if _G.LunarHubExecuted == true then
 	warn("LunarHub // LunarHub is already executed!")
 	return
@@ -93,7 +104,7 @@ end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
 
-local LunarHub = game:GetObjects("rbxassetid://11520374479")[1]
+local LunarHub = getObjects("rbxassetid://11520374479")[1]
 
 wait(2)
 
