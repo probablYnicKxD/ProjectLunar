@@ -1944,7 +1944,7 @@ TaskbarUI.Buttons.JoinCodes.Interact.MouseButton1Click:Connect(function()
 	TS:Create(joinUI.Parent, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.75,-70)}):Play()
 end)
 
-joinUI.Create:Connect(function()
+joinUI.Create.MouseButton1Click:Connect(function()
 	local success,errMsg = pcall(function()
 		setclipboard(generateJoinCode())
 	end)
@@ -1957,7 +1957,7 @@ joinUI.Create:Connect(function()
 	end
 end)
 
-joinUI.Join:Connect(function()
+joinUI.Join.MouseButton1Click:Connect(function()
 	notifyUser("Attempting to join server via Lunar Hub Join Code...", true)
 
 	local gameID, serverID = translateJoinCode(joinUI.JoinCodeInput)
