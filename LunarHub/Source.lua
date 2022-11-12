@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.0f Testing
+  	LunarHub - Version 0.0.0e Testing
   	
   	If you see this before its announce/release, congratulations! you have successfully stalked my github.
   
@@ -50,7 +50,7 @@ local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local RS = game:GetService("ReplicatedStorage")
 
-local LunarHubVersion = "v0.0.0f Testing"
+local LunarHubVersion = "v0.0.0e Testing"
 
 local latest = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion")
 
@@ -142,7 +142,7 @@ end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
 
-repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes
+repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG
 
 wait(5)
 
