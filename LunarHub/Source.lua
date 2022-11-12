@@ -1,8 +1,8 @@
 --[[
 
-  	LunarHub - Version 0.0.0c Testing
-
-	If you see this before it's announced/released, congratulations! you have successfully stalked my github.
+  	LunarHub - Version 0.1.0 Beta
+  	
+  	If you see this before its announce/release, congratulations! you have successfully stalked my github.
   
   	Made by probablYnicK
   
@@ -1810,22 +1810,24 @@ spawn(function()
 end)
 
 spawn(function()
-	if getTimeSinceBoot("min") == 0 then
-		timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("sec")) .. " seconds"
-	elseif getTimeSinceBoot("min") > 60 then
-		timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("hour")) .. " hours"
-	else
-		timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("min")) .. " minutes"
+	while wait(0.5) do
+		if getTimeSinceBoot("min") == 0 then
+			timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("sec")) .. " seconds"
+		elseif getTimeSinceBoot("min") > 60 then
+			timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("hour")) .. " hours"
+		else
+			timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("min")) .. " minutes"
+		end
+
+		local date,dateMsg,hour = getDate()
+
+		HomeUI.Title.Text = dateMsg
+		HomeUI.Subtitle.Text = msgToSub(hour)
+
+		HomeUI.CurrentTime.Info.Text = date
+
+		LunarHub.Taskbar.Time.Text = date
 	end
-
-	local date,dateMsg,hour = getDate()
-
-	HomeUI.Title.Text = dateMsg
-	HomeUI.Subtitle.Text = msgToSub(hour)
-
-	HomeUI.CurrentTime.Info.Text = date
-
-	LunarHub.Taskbar.Time.Text = date
 end)
 
 print("LunarHub // Loaded LunarHub " .. LunarHubVersion .. " in " .. os.clock() .. " seconds")
