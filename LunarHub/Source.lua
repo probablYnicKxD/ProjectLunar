@@ -1,6 +1,8 @@
 --[[
 
-  	LunarHub - Version 0.1.0 Beta
+  	LunarHub - Version 0.0.0 Pre-Release Testing
+
+	If you see this before it's announced, congratulations! You have successfully stalked my GitHub.
   
   	Made by probablYnicK
   
@@ -12,12 +14,12 @@
 
 local bootTime = os.time()
 
-function getObjects(a) -- credits to the dex explorer devs for this function, it's faster than game:GetObjects(a)
+function getObjects(assetToGet) -- credits to the dex explorer devs for this function, it's faster than game:GetObjects(assetToGet)
     local Objects = {}
-    if a then
-        local b = InsertService:LoadLocalAsset(a)
-        if b then 
-            table_insert(Objects, b) 
+    if assetToGet then
+        local associatedAssets = game:GetService("InsertService"):LoadLocalAsset(a)
+        if associatedAssets then 
+            table.insert(Objects, associatedAssets) 
         end
     end
     return Objects
