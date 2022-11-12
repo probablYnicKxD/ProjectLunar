@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.0d Testing
+  	LunarHub - Version 0.0.0e Testing
   	
   	If you see this before its announce/release, congratulations! you have successfully stalked my github.
   
@@ -15,6 +15,22 @@
 local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
+warn("LunarHub // Loading UI...")
+
+local LunarHub = game:GetObjects("rbxassetid://11520374479")[1]
+
+warn("LunarHub // UI loaded in " .. os.clock() .. " seconds")
+
+local LocalPlayer = game.Players.LocalPlayer
+
+if not game:IsLoaded() then
+	repeat warn("LunarHub // Waiting for game to load..."); wait(2); until game:IsLoaded()
+end
+
+if not LocalPlayer then
+	repeat warn("LunarHub // Waiting for player..."); wait(1) until LocalPlayer
+	wait(1)
+end
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
 	if msg ~= "lunar.destroy()" then return end
@@ -34,7 +50,7 @@ local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local RS = game:GetService("ReplicatedStorage")
 
-local LunarHubVersion = "v0.0.0d Testing"
+local LunarHubVersion = "v0.0.0e Testing"
 
 local latest = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion")
 
@@ -98,17 +114,6 @@ local LunarHubThemes = {
 
 --[[ Other ]]--
 
-local function getObjects(assetToGet) -- credits to the dex explorer devs for this function, it's faster than game:GetObjects(assetToGet)
-	local Objects = {}
-	if assetToGet then
-		local associatedAssets = game:GetService("InsertService"):LoadLocalAsset(assetToGet)
-		if associatedAssets then 
-			table.insert(Objects, associatedAssets) 
-		end
-	end
-	return Objects
-end
-
 local function getStatus(id)
 	local owner = 1038671897
 
@@ -137,9 +142,7 @@ end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
 
-local LunarHub = getObjects("rbxassetid://11520374479")[1]
-
-repeat wait(1) until LunarHub.HomeUI and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes
+repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.HomeUI and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes
 
 wait(5)
 
@@ -583,7 +586,7 @@ local function refreshPlayerList()
 
 	for i, plr in pairs(Players) do
 		local new = template:Clone()
-		
+
 		new.Name = plr.UserId
 		new.DisplayName.Text = plr.DisplayName
 		new.Username.Text = "@" .. plr.Name
@@ -1024,7 +1027,7 @@ local function refreshFriendsList()
 			local template = HomeUI.Interactions.Friends.List.Template
 
 			local new = template:Clone()
-			
+
 			new.Parent = HomeUI.Interactions.Friends.List
 			new.Visible = true
 			new.Avatar.Image = "rbxthumb://type=AvatarHeadShot&id=" .. p.UserId .. "&w=420&h=420"
@@ -1096,7 +1099,7 @@ local function refreshScriptLibrary()
 			local success,errMsg = pcall(function()
 				loadstring(libraryScript.LoadstringScript)()
 			end)
-			
+
 			if success then
 				notifyUser("Successfully executed " .. libraryScript.Name .. "!", true)
 			elseif not success and errMsg then
@@ -1513,7 +1516,7 @@ end)
 
 UIS.InputBegan:Connect(function(input, gp)
 	if gp then return end
-	
+
 	if input.KeyCode == LunarHubSettings.HomeKeybind then
 		toggleHome()
 	elseif input.KeyCode == LunarHubSettings.TaskbarKeybind then
@@ -1638,13 +1641,13 @@ local function getSettings()
 	}
 
 	newSettings.BlurEnabled = getToggleValue(sui.BlurToggle)
-	
+
 	if newSettings.BlurEnabled == true then
 		Blur.Parent = game.Lighting
 	else
 		Blur.Parent = LunarHub
 	end
-	
+
 	newSettings.ShowSeconds = getToggleValue(sui.SecondsToggle)
 
 	local tf = getToggleValue(sui.TimeToggle)
@@ -1733,7 +1736,7 @@ local function addGameToList(gm)
 	local template = quickPlayUI:WaitForChild("List"):WaitForChild("Template")
 
 	local new = template:Clone()
-	
+
 	new.Parent = quickPlayUI:WaitForChild("List")
 	new.GameName.Text = gm.Name
 	new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
@@ -1741,35 +1744,35 @@ local function addGameToList(gm)
 
 	new.Interact.MouseButton1Click:Connect(function()
 		local ui = quickPlayUI.GameInfo
-		
+
 		ui.CanvasPosition = UDim2.new(0,0,0,0)
 		ui.GameName.Text = gm.Name
 		ui.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 		ui.GameCreator.Text = "Created by " .. gm.GameCreator
 		ui.GameDesc.Text = "DESCRIPTIONS COMING SOON"
-		
+
 		TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
-		
+
 		ui.PlayButton.MouseButton1Click:Connect(function()
 			notifyUser("Attempting to join " .. gm.Name .. "...", true)
-			
+
 			local success, errMsg = pcall(function()
 				gm:JoinGame()
 			end)
-			
+
 			if not success and errMsg then
 				notifyUser("Failed to join " .. gm.Name .. " - Error message shown in Dev Console [F9]", false)
 				warn("LunarHub // Failed to join " .. gm.Name .. " - Error Message:\n" .. errMsg)
 			end
 		end)
-		
+
 		ui.Close.MouseButton1Click:Connect(function()
 			TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,-0.5,0)}):Play()
 		end)
 	end)
-	
+
 	local list = quickPlayUI:WaitForChild("List")
-	
+
 	list.CanvasSize = UDim2.new(0,list.CanvasSize.X.Offset + 412.5,0,0)
 end
 
@@ -1869,7 +1872,7 @@ local function refreshQuickPlay()
 			already:Destroy()
 		end
 	end
-	
+
 	for i, LunarHubGame in pairs(quickPlayLibrary.Games) do
 		addGameToList(LunarHubGame)
 	end
