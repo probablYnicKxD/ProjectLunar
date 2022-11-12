@@ -1,8 +1,10 @@
 --[[
 
-    game libary handwritten by probablYnicK
+    game libary handwritten by probablYnicK and soon to be used for LunarHub
 
     dm me if you want me to add a game to the library
+
+    also dm me if you find an error in game info, like creator name typo, game name typo, etc.
 
     discord: lunaR_nicK#6800
 
