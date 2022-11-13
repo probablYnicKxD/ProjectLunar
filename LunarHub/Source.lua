@@ -17,19 +17,34 @@ local bootTime = os.time()
 warn("LunarHub // LunarHub is starting!")
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
-	if msg ~= "lunar:Destroy()" then return end
+	if msg == "lunar:Destroy()" then
+		if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
+			game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
+			local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
 
-	if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
-		game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
-		local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+			if cam then cam.FieldOfView = 70 end
 
-		if cam then cam.FieldOfView = 70 end
+			local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
 
-		local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
+			if blur then blur:Destroy() end
 
-		if blur then blur:Destroy() end
+			warn("LunarHub // Destroyed interface.")
+		end
+	elseif msg == "lunar:Reload()" or msg == "lunar:Update()" then
+		if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
+			game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
+			local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
 
-		warn("LunarHub // Destroyed interface.")
+			if cam then cam.FieldOfView = 70 end
+
+			local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
+
+			if blur then blur:Destroy() end
+
+			warn("LunarHub // Destroyed interface, updating script!")
+		end
+			
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/Source.lua"))()	
 	end
 end)
 
@@ -139,6 +154,8 @@ local LunarHubThemes = {
 	ECLIPSE = {}
 }
 
+--THEMES ARE COMING SOON!--
+
 --[[ Other ]]--
 
 local function getStatus(id)
@@ -198,7 +215,6 @@ local function activateBlur()
 
 	local activation = TS:Create(blur, SecondaryTweenInfo, {Size = 10})
 	activation:Play()
-	activation.Completed:Wait()
 end
 
 local function deactivateBlur()
@@ -208,9 +224,6 @@ local function deactivateBlur()
 
 	local deactivation = TS:Create(blur, SecondaryTweenInfo, {Size = 0})
 	deactivation:Play()
-	deactivation.Completed:Wait()
-
-	blur.Enabled = false
 end
 
 local function camZoomIn()
@@ -289,18 +302,12 @@ local lltween = TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0})
 lltween:Play()
 lltween.Completed:Wait()
 
-wait(1)
-
 local lltween2 = TS:Create(LunarLogo, LongTweenInfo, {ImageColor3 = Color3.fromRGB(0,0,0)})
 lltween2:Play()
 lltween2.Completed:Wait()
 
-wait(1)
-
 local lltween3 = TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0.7, Size = UDim2.new(10,0,10,0)})
 lltween3:Play()
-
-openHome()
 
 --[[ Utility Functions ]]--
 
