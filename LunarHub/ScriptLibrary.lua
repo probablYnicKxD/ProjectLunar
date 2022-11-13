@@ -209,4 +209,20 @@ scripts.DexExplorer = {
 	}
 }
 
+scripts.BetterBypasser = {
+	Name = "BetterBypasser",
+	Description = "A chat bypasser that bypasses the chat filter using unknown symbols. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/daddysyn/synergy/additional/betterbypasser",true))()',
+	SupportedGames = {},
+	MultipleGames = true,
+	Universal = true,
+	KeySys = false,
+	Creator = "Unknown",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
