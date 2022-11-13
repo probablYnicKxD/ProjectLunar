@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.0e Testing
+  	LunarHub - Version 0.0.0f Testing
   	
   	If you see this before its announce/release, congratulations! you have successfully stalked my github.
   
@@ -15,11 +15,53 @@
 local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
+
+game.Players.LocalPlayer.Chatted:Connect(function(msg)
+	if msg ~= "lunar:Destroy()" then return end
+
+	if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
+		game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
+		local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+		if cam then cam.FieldOfView = 70 end
+
+		local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
+
+		if blur then blur:Destroy() end
+
+		warn("LunarHub // Destroyed interface.")
+	end
+end)
+
+if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
+	game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then cam.FieldOfView = 70 end
+
+	local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
+
+	if blur then blur:Destroy() end
+
+	warn("LunarHub // LunarHub automatically destroyed another instance of the interface!")
+end
+
 warn("LunarHub // Loading UI...")
 
 local LunarHub = game:GetObjects("rbxassetid://11520374479")[1]
 
-warn("LunarHub // UI loaded in " .. os.clock() .. " seconds")
+--[[ yielding so that no errors mid-script, this will change if i find a different way to do this ]]--
+
+local yield = LunarHub:WaitForChild("Home"):WaitForChild("Interactions"):WaitForChild("Server"):WaitForChild("Players")
+local second_Yield = LunarHub:WaitForChild("Playerlist"):WaitForChild("Interactions"):WaitForChild("List"):WaitForChild("Template"):WaitForChild("Interactions"):WaitForChild("Teleport"):WaitForChild("Shadow"):WaitForChild("UICorner")
+
+repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG
+
+local additionalYield = 7.5
+
+wait(additionalYield)
+
+warn("LunarHub // UI loaded in " .. os.time() - bootTime .. " seconds")
 
 local LocalPlayer = game.Players.LocalPlayer
 
@@ -28,29 +70,15 @@ if not game:IsLoaded() then
 end
 
 if not LocalPlayer then
-	repeat warn("LunarHub // Waiting for player..."); wait(1) until LocalPlayer
+	repeat warn("LunarHub // Waiting for player..."); wait(1) until game.Players.LocalPlayer
 	wait(1)
-end
-
-game.Players.LocalPlayer.Chatted:Connect(function(msg)
-	if msg ~= "lunar.destroy()" then return end
-
-	if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
-		game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
-		warn("LunarHub // Destroyed interface.")
-	end
-end)
-
-if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
-	game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
-	warn("LunarHub // LunarHub automatically destroyed another instance of LunarHub.")
 end
 
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local RS = game:GetService("ReplicatedStorage")
 
-local LunarHubVersion = "v0.0.0e Testing"
+local LunarHubVersion = "v0.0.0f Testing"
 
 local latest = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion")
 
@@ -85,7 +113,7 @@ local SecondaryTweenInfo = TweenInfo.new(
 )
 
 local LongTweenInfo = TweenInfo.new(
-	2.5,
+	3.25,
 	Enum.EasingStyle.Exponential,
 	Enum.EasingDirection.Out,
 	0,
@@ -97,7 +125,6 @@ local LunarHubSettings = {
 	Theme = "DARK",
 	TaskbarKeybind = Enum.KeyCode.E,
 	HomeKeybind = Enum.KeyCode.H,
-	BlurEnabled = false,
 	TimeFormat = 12,
 	ShowSeconds = false,
 }
@@ -125,7 +152,7 @@ local function getStatus(id)
 
 	if id == prealphatester then
 		return "Project Lunar Pre-Alpha Tester"
-	elseif game.Players:GetPlayerByUserId(id).OsPlatform == "LunarHub" then
+	elseif game.Players:GetPlayerByUserId(id) and game.Players:GetPlayerByUserId(id).OsPlatform == "LunarHub" then
 		return "Project Lunar User"
 	else
 		return "Non-Project Lunar User"
@@ -141,10 +168,6 @@ local function getGameName()
 end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
-
-repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG
-
-wait(5)
 
 --[[ UIs ]]--
 
@@ -162,11 +185,62 @@ local ThemeImportUI = LunarHub.ThemeImport
 
 local LunarLogo = LunarHub.LunarLogo
 
+local OpenTaskbarOnClose = true
+
 local scriptsOpen = false
 local taskbarOpen = false
 
+local function activateBlur()
+	local blur = LunarHub:FindFirstChild("ProjectLunarBlur") or game:GetService("Lighting"):FindFirstChild("ProjectLunarBlur")
+
+	blur.Parent = game:GetService("Lighting")
+	blur.Enabled = true
+
+	local activation = TS:Create(blur, SecondaryTweenInfo, {Size = 10})
+	activation:Play()
+	activation.Completed:Wait()
+end
+
+local function deactivateBlur()
+	local blur = LunarHub:FindFirstChild("ProjectLunarBlur") or game:GetService("Lighting"):FindFirstChild("ProjectLunarBlur")
+
+	blur.Parent = game:GetService("Lighting")
+
+	local deactivation = TS:Create(blur, SecondaryTweenInfo, {Size = 0})
+	deactivation:Play()
+	deactivation.Completed:Wait()
+
+	blur.Enabled = false
+end
+
+local function camZoomIn()
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then
+		TS:Create(cam, SecondaryTweenInfo, {FieldOfView = 40}):Play()
+	end
+end
+
+local function camZoomOut()
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then
+		TS:Create(cam, SecondaryTweenInfo, {FieldOfView = 70}):Play()
+	end
+end
+
+local function inBlur()
+	activateBlur()
+	camZoomIn()
+end
+
+local function outDeBlur()
+	deactivateBlur()
+	camZoomOut()
+end
+
 local function openHome()
-	if LunarHub.Scripts.Position == UDim2.new(0.5,0,1,-90) then
+	if LunarHub:WaitForChild("Scripts").Position == UDim2.new(0.5,0,1,-90) then
 		scriptsOpen = true
 	else
 		scriptsOpen = false
@@ -184,28 +258,7 @@ local function openHome()
 	TS:Create(LunarHub.DarkBG, SecondaryTweenInfo, {BackgroundTransparency = 0.7}):Play()
 	TS:Create(HomeUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
 
-	if LunarHubSettings.BlurEnabled then
-		Blur.Parent = game:GetService("Lighting")
-
-		Blur.Enabled = true
-
-		local bluropen = TS:Create(Blur, SecondaryTweenInfo, {Size = 10})
-		bluropen:Play()
-	else
-		Blur.Parent = LunarHub
-	end
-
-	local success,errMsg = pcall(function()
-		local camera = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
-
-		if camera then
-			TS:Create(camera, SecondaryTweenInfo, {FieldOfView = 40}):Play()
-		end
-	end)
-
-	if not success and errMsg then
-		warn("LunarHub // Failed to do task: ProjectLunarTask_HomeZoomIn - Error Message:\n" .. errMsg)
-	end
+	inBlur()
 end
 
 local function closeHome()
@@ -213,35 +266,15 @@ local function closeHome()
 		TS:Create(LunarHub.Scripts, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1,-90)}):Play()
 	end
 
-	if taskbarOpen then
+	if taskbarOpen or OpenTaskbarOnClose then
 		TS:Create(LunarHub.Taskbar, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1,-12)}):Play()
+		OpenTaskbarOnClose = false
 	end
 
 	TS:Create(LunarHub.DarkBG, SecondaryTweenInfo, {BackgroundTransparency = 1}):Play()
 	TS:Create(HomeUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,-0.5,0)}):Play()
 
-	if LunarHubSettings.BlurEnabled then
-		Blur.Parent = game:GetService("Lighting")
-
-		Blur.Enabled = true
-
-		local blurclose = TS:Create(Blur, SecondaryTweenInfo, {Size = 0})
-		blurclose:Play()
-	else
-		Blur.Parent = LunarHub
-	end
-
-	local success,errMsg = pcall(function()
-		local camera = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
-
-		if camera then
-			TS:Create(camera, SecondaryTweenInfo, {FieldOfView = 70}):Play()
-		end
-	end)
-
-	if not success and errMsg then
-		warn("LunarHub // Failed to do task: ProjectLunarTask_HomeZoomOut - Error Message:\n" .. errMsg)
-	end
+	outDeBlur()
 end
 
 local function toggleHome()
@@ -252,13 +285,17 @@ local function toggleHome()
 	end
 end
 
-local lltween = TS:Create(LunarLogo, NormalTweenInfo, {ImageTransparency = 0})
+local lltween = TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0})
 lltween:Play()
 lltween.Completed:Wait()
 
-local lltween2 = TS:Create(LunarLogo, NormalTweenInfo, {ImageColor3 = Color3.fromRGB(0,0,0)})
+wait(1)
+
+local lltween2 = TS:Create(LunarLogo, LongTweenInfo, {ImageColor3 = Color3.fromRGB(0,0,0)})
 lltween2:Play()
 lltween2.Completed:Wait()
+
+wait(1)
 
 local lltween3 = TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0.7, Size = UDim2.new(10,0,10,0)})
 lltween3:Play()
@@ -269,13 +306,15 @@ openHome()
 
 local function notifyUser(msg, success, notiTime)
 	task.spawn(function()
-		local template = NotificationUI.Template
+		local template = NotificationUI:WaitForChild("Template")
 
 		local new = template:Clone()
 
 		new.Name = "Notification"
 		new.Parent = NotificationUI
 		new.NotificationText.Text = msg
+		new.NotificationText.TextTransparency = 1
+		new.BackgroundTransparency = 1
 
 		if success == nil then
 			new.Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(90, 90, 90)), ColorSequenceKeypoint.new(1, Color3.fromRGB(26, 26, 26))})
@@ -291,6 +330,12 @@ local function notifyUser(msg, success, notiTime)
 
 		new.Visible = true
 
+		TS:Create(new, SecondaryTweenInfo, {BackgroundTransparency = 0}):Play()
+
+		local notiTween_first = TS:Create(new.NotificationText, NormalTweenInfo, {TextTransparency = 0})
+		notiTween_first:Play()
+		notiTween_first.Completed:Wait()
+
 		local notificationTime = notiTime or 7.5
 
 		wait(notificationTime)
@@ -302,6 +347,8 @@ local function notifyUser(msg, success, notiTime)
 
 		new:Destroy()
 	end)
+
+	wait()
 end
 
 notifyUser("Welcome to LunarHub " .. LunarHubVersion .. ", " .. game.Players.LocalPlayer.DisplayName .. "!")
@@ -364,9 +411,9 @@ if syn then
 end
 
 if UserExecutor == "Unknown" then
-	notifyUser("Detected executor: " .. UserExecutor, false)
+	if _G.LunarHubDebugMode == true then notifyUser("Detected executor: " .. UserExecutor, false) end
 else
-	notifyUser("Detected executor: " .. UserExecutor, true)
+	if _G.LunarHubDebugMode == true then notifyUser("Detected executor: " .. UserExecutor, true) end
 end
 
 --[[ Configurations ]]--
@@ -419,7 +466,6 @@ local function loadConfiguration()
 			Theme = configFile.Theme,
 			TaskbarKeybind = configFile.TaskbarKeybind,
 			HomeKeybind = configFile.HomeKeybind,
-			BlurEnabled = configFile.BlurEnabled,
 			TimeFormat = configFile.TimeFormat,
 			ShowSeconds = configFile.ShowSeconds,
 		}
@@ -448,7 +494,6 @@ local function loadConfiguration()
 
 		set.HomeKeybind.KeybindFrame.CurrentBind.Text = keybindToString(configFile.HomeKeybind)
 		set.TaskbarKeybind.KeybindFrame.CurrentBind.Text = keybindToString(configFile.TaskbarKeybind)
-		set.BlurToggle.Icon.ImageColor3 = toggleToColor(configFile.BlurEnabled)
 		set.TimeToggle.Icon.ImageColor3 = toggleToColor(numToToggle(configFile.TimeFormat))
 		set.SecondsToggle.Icon.ImageColor3 = toggleToColor(configFile.ShowSeconds)
 	end
@@ -474,7 +519,7 @@ end
 if checkFunctions() == true then
 	if isfolder(CustomFolderName) then
 		loadcustomscripts()
-		firstTime = false
+		firstTime = true
 	else
 		if firstTime ~= true then
 			notifyUser("We have detected that you do not have saved settings and have calculated that this is your first time using LunarHub!", true)
@@ -486,7 +531,7 @@ if checkFunctions() == true then
 
 	if isfolder(ConfigFolderName) then
 		loadConfiguration()
-		firstTime = false
+		firstTime = true
 	else
 		if firstTime ~= true then
 			notifyUser("We have detected that you do not have saved settings and have calculated that this is your first time using LunarHub!", true)
@@ -573,7 +618,7 @@ game.Players.PlayerRemoving:Connect(function()
 	Players = updatePlayerListTable()	
 end)
 
-local list = PlayerlistUI.Interactions.List
+local list = PlayerlistUI.Interactions:WaitForChild("List")
 
 local function refreshPlayerList()
 	for i, already in pairs(list:GetChildren()) do
@@ -582,7 +627,7 @@ local function refreshPlayerList()
 		end
 	end
 
-	local template = list.Template
+	local template = list:WaitForChild("Template")
 
 	for i, plr in pairs(Players) do
 		local new = template:Clone()
@@ -601,9 +646,9 @@ local function refreshPlayerList()
 		end
 
 		if game.Players.LocalPlayer:IsFriendsWith(plr.UserId) then
-			new.IsFriend.Visible = true
+			new:WaitForChild("IsFriend").Visible = true
 		else
-			new.IsFriend.Visible = false
+			new:WaitForChild("IsFriend").Visible = false
 		end
 
 		new.Interactions.Locate.Interact.MouseButton1Click:Connect(function()
@@ -729,14 +774,14 @@ serverInfo.ServerID.Info.Text = tostring(game.JobId)
 
 local lunaruserstable = getlunarusers()
 
-serverInfo.Players.Info.Text = tostring(#game.Players:GetPlayers()) .. "/" .. game.Players.MaxPlayers
-serverInfo.LunarPlayers.Text = tostring(#lunaruserstable) .. " Lunar Users are playing right now"
+serverInfo:WaitForChild("Players"):WaitForChild("Info").Text = tostring(#game.Players:GetPlayers()) .. "/" .. game.Players.MaxPlayers .. " Players"
+serverInfo:WaitForChild("LunarPlayers").Text = tostring(#lunaruserstable) .. " Lunar Users are playing right now"
 
 local function updateServerPlayers()
 	lunaruserstable = getlunarusers()
 
-	serverInfo.Players.Info.Text = tostring(#game.Players:GetPlayers()) .. "/" .. game.Players.MaxPlayers .. " Players"
-	serverInfo.LunarPlayers.Text = tostring(#lunaruserstable) .. " Lunar Users are playing right now"
+	serverInfo:WaitForChild("Players"):WaitForChild("Info").Text = tostring(#game.Players:GetPlayers()) .. "/" .. game.Players.MaxPlayers .. " Players"
+	serverInfo:WaitForChild("LunarPlayers").Text = tostring(#lunaruserstable) .. " Lunar Users are playing right now"
 end
 
 game.Players.PlayerAdded:Connect(function(p)
@@ -1000,11 +1045,13 @@ local function msgToSub(hour)
 	if hour == 24 then
 		msg = "why are you awake?"
 	end
+
+	return msg
 end
 
 local timeElapsedUI = inter.TimeElapsed
 
-timeElapsedUI.Subtitle = "You've been playing " .. getGameName() .. " for"
+timeElapsedUI.Subtitle.Text = "You've been playing " .. getGameName() .. " for"
 
 --spawn at bottom of code
 
@@ -1016,7 +1063,7 @@ if LunarHubVersion ~= latest then
 end
 
 local function refreshFriendsList()
-	for i, already in pairs(HomeUI.Interactions.Friends.List:GetChildren()) do
+	for i, already in pairs(HomeUI:WaitForChild("Interactions"):WaitForChild("Friends"):WaitForChild("List"):GetChildren()) do
 		if already.Name ~= "UIListLayout" and already.Name ~= "Template" then
 			already:Destroy()
 		end
@@ -1041,8 +1088,13 @@ end
 
 refreshFriendsList()
 
-game.Players.PlayerAdded:Connect(refreshFriendsList())
-game.Players.PlayerRemoving:Connect(refreshFriendsList())
+game.Players.PlayerAdded:Connect(function()
+	refreshFriendsList()
+end)
+
+game.Players.PlayerRemoving:Connect(function()
+	refreshFriendsList()
+end)
 
 --[[ Script list + Searching ]]--
 
@@ -1068,7 +1120,7 @@ local function refreshScriptLibrary()
 
 		local scriptTags = new.Tags
 
-		for i, already in pairs(scriptTags) do
+		for i, already in pairs(scriptTags:GetChildren()) do
 			if already:IsA("Frame") and already.Name ~= "UIListLayout" and already.Name ~= "Placeholder" then
 				already.Visible = false
 			end
@@ -1108,23 +1160,23 @@ local function refreshScriptLibrary()
 			end
 		end)
 
-		if #libraryScript.Games == 1 then
-			new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. libraryScript.Games[1] .. "&w=150&h=150"
-		elseif #libraryScript.Games >= 2 then
-			local gameThumbnail = table.find(libraryScript.Games, game.PlaceId)
+		if #libraryScript.SupportedGames == 1 then
+			new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. libraryScript.SupportedGames[1] .. "&w=150&h=150"
+		elseif #libraryScript.SupportedGames >= 2 then
+			local gameThumbnail = table.find(libraryScript.SupportedGames, game.PlaceId)
 
 			if gameThumbnail then
 				new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. game.PlaceId .. "&w=150&h=150"
 			else
-				local randomThumbnail = math.random(1,#libraryScript.Games)
+				local randomThumbnail = math.random(1,#libraryScript.SupportedGames)
 
-				local randomGameID = libraryScript.Games[randomThumbnail]
+				local randomGameID = libraryScript.SupportedGames[randomThumbnail]
 
 				if randomGameID then
 					new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. randomGameID .. "&w=150&h=150"
 				end
 			end
-		elseif #libraryScript.Games == 0 and libraryScript.Universal == true then
+		elseif #libraryScript.SupportedGames == 0 and libraryScript.Universal == true then
 			new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. game.PlaceId .. "&w=768&h=432"
 		else
 			new.GameThumbnail.Image = ""
@@ -1165,7 +1217,17 @@ local function refreshCustomLibrary()
 		end
 
 		new.Execute.MouseButton1Click:Connect(function()
-			loadstring(customScr.LoadstringScript)()
+			local success,errMsg = pcall(function()
+				loadstring(customScr.LoadstringScript)()
+			end)
+
+			if success then
+				notifyUser("Successfully executed " .. customScr.Name .. "!", true)
+			elseif not success and errMsg then
+				notifyUser("Failed to execute " .. customScr.Name .. " - Error message shown in Dev Console [F9]", false)
+				warn("LunarHub // Failed to execute custom script: " .. customScr.Name .. " - Error Message:\n" .. errMsg)
+				return
+			end
 		end)
 
 		if customScr.Games == "UNIVERSAL" then
@@ -1202,14 +1264,13 @@ local function detectBestScriptForGame()
 	local _script = nil
 
 	for i, scr in pairs(scriptLibrary) do
-		if scr.Universal == false and table.find(scr.Games, gameID) then
+		if scr.Universal == false and table.find(scr.SupportedGames, gameID) then
 			table.insert(possibleScripts, scr)
 		end
 	end
 
-	if #possibleScripts == 1 and _script == nil then
-		_script = possibleScripts[1]
-		return _script
+	if #possibleScripts == 1 then
+		return possibleScripts[1]
 	elseif #possibleScripts == 0 then
 		for i, scr in pairs(scriptLibrary) do
 			if scr.Universal == true then
@@ -1223,7 +1284,7 @@ local function detectBestScriptForGame()
 	local bestScript
 
 	for i, scr in pairs(possibleScripts) do
-		if table.find(scr.Games, game.PlaceId) or scr.Universal == true then
+		if table.find(scr.SupportedGames, game.PlaceId) or scr.Universal == true then
 			if scr.Tags["PositiveReviews"] and bestScript == nil and not scr.Tags["Patched"] then
 				bestScript = scr
 			elseif scr.Tags["PositiveReviews"] and bestScript ~= nil and not scr.Tags["Patched"] then
@@ -1236,13 +1297,28 @@ local function detectBestScriptForGame()
 		end
 	end
 
+	if lockedBestScript or bestScript then
+		return lockedBestScript or bestScript
+	else
+		for i, v in pairs(scriptLibrary) do
+			if v.Universal == true then
+				return v	
+			end
+		end
+	end
+
 	return lockedBestScript or bestScript
 end
 
 refreshScriptLibrary()
 
-LunarHub.ScriptSearch.Refresh.Interact.MouseButton1Click:Connect(refreshScriptLibrary())
-LunarHub.CustomScripts.Refresh.Interact.MouseButton1Click:Connect(refreshCustomLibrary())
+LunarHub.ScriptSearch.Refresh.Interact.MouseButton1Click:Connect(function()
+	refreshScriptLibrary()
+end)
+
+LunarHub.CustomScripts.Refresh.Interact.MouseButton1Click:Connect(function()
+	refreshCustomLibrary()
+end)
 
 --[[ Searching ]]--
 
@@ -1324,8 +1400,13 @@ local function makecustomscript(name, desc, games, loadstr)
 	refreshCustomLibrary()
 end
 
-LunarHub.ScriptSearch.SearchBox:GetPropertyChangedSignal("Text"):Connect(searchScripts())
-LunarHub.CustomScripts.SearchBox:GetPropertyChangedSignal("Text"):Connect(searchCustomScripts())
+LunarHub.ScriptSearch.SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	searchScripts()
+end)
+
+LunarHub.CustomScripts.SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	searchCustomScripts()
+end)
 
 local function promptGameDetection()
 	local bestScript = detectBestScriptForGame()
@@ -1449,6 +1530,8 @@ LunarHub.Scripts.Interactions.Library.Interact.MouseButton1Click:Connect(functio
 
 	local ui = LunarHub.ScriptSearch
 
+	TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
+
 	ui.Close.MouseButton1Click:Connect(function()
 		TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1.5,0)}):Play()
 		TS:Create(LunarHub.Scripts, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1,-90)}):Play()
@@ -1537,7 +1620,7 @@ LunarHub.CustomScriptCreator.CreateScript.Interact.MouseButton1Click:Connect(fun
 	end
 
 	if ui.GamesInput.Text == "" then
-		notifyUser("Please a valid game list or type \"UNIVERSAL\" into the textbox if your script is universal!", false)
+		notifyUser("Please a valid game list or type 'UNIVERSAL' into the textbox if your script is universal!", false)
 		return
 	end
 
@@ -1581,6 +1664,10 @@ ScriptsUI.Interactions.CustomScripts.Interact.MouseButton1Click:Connect(function
 end)
 
 --[[ Settings UI ]]--
+
+if _G.OverrideSettings then
+	LunarHubSettings = _G.OverrideSettings
+end
 
 TaskbarUI.Buttons.Settings.Interact.MouseButton1Click:Connect(function()
 	TS:Create(SettingsUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
@@ -1635,18 +1722,9 @@ local function getSettings()
 		Theme = "DARK",
 		TaskbarKeybind = Enum.KeyCode.E,
 		HomeKeybind = Enum.KeyCode.H,
-		BlurEnabled = false,
 		TimeFormat = 12,
 		ShowSeconds = false,
 	}
-
-	newSettings.BlurEnabled = getToggleValue(sui.BlurToggle)
-
-	if newSettings.BlurEnabled == true then
-		Blur.Parent = game.Lighting
-	else
-		Blur.Parent = LunarHub
-	end
 
 	newSettings.ShowSeconds = getToggleValue(sui.SecondsToggle)
 
@@ -1673,13 +1751,6 @@ sui.SecondsToggle.Interact.MouseButton1Click:Connect(function()
 	writesettings(getSettings())
 end)
 
-sui.BlurToggle.Interact.MouseButton1Click:Connect(function()
-	local newVal = toggleToggle()
-
-	LunarHubSettings.BlurEnabled = newVal
-	writesettings(getSettings())
-end)
-
 sui.TimeToggle.Interact.MouseButton1Click:Connect(function()
 	local newVal = toggleToggle()
 
@@ -1692,17 +1763,22 @@ sui.TimeToggle.Interact.MouseButton1Click:Connect(function()
 	writesettings(getSettings())
 end)
 
-sui.HomeKeybind.Interact.MouseButton1Click:Connect(function()
+sui:WaitForChild("HomeKeybind"):WaitForChild("Interact").MouseButton1Click:Connect(function()
 	sui.HomeKeybind.KeybindFrame.CurrentBind.Text = "Press Key"
 end)
 
-sui.TaskbarKeybind.Interact.MouseButton1Click:Connect(function()
+sui:WaitForChild("TaskbarKeybind"):WaitForChild("Interact").MouseButton1Click:Connect(function()
 	sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text = "Press Key"
 end)
 
 UIS.InputBegan:Connect(function(input)
-	if sui.HomeKeybind.KeybindFrame.CurrentBind.Text == "Press Key" then
+	if sui:WaitForChild("HomeKeybind"):WaitForChild("KeybindFrame"):WaitForChild("CurrentBind").Text == "Press Key" then
 		if input.UserInputType == Enum.UserInputType.Keyboard then
+			if input.KeyCode == LunarHubSettings.TaskbarKeybind or input.KeyCode == LunarHubSettings.HomeKeybind then
+				notifyUser("You cannot set two keybinds to the same value!", false)
+				return
+			end
+
 			local keyStr = string.sub(tostring(input.KeyCode), 14)
 
 			sui.HomeKeybind.KeybindFrame.CurrentBind.Text = keyStr
@@ -1713,8 +1789,13 @@ UIS.InputBegan:Connect(function(input)
 		end
 	end
 
-	if sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text == "Press Key" then
+	if sui:WaitForChild("TaskbarKeybind"):WaitForChild("KeybindFrame"):WaitForChild("CurrentBind").Text == "Press Key" then
 		if input.UserInputType == Enum.UserInputType.Keyboard then
+			if input.KeyCode == LunarHubSettings.TaskbarKeybind or input.KeyCode == LunarHubSettings.HomeKeybind then
+				notifyUser("You cannot set two keybinds to the same value!", false)
+				return
+			end
+
 			local keyStr = string.sub(tostring(input.KeyCode), 14)
 
 			sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text = keyStr
@@ -1730,22 +1811,27 @@ end)
 
 local quickPlayUI = LunarHub.QuickPlay
 
+local template = quickPlayUI:WaitForChild("List"):WaitForChild("Template")
+template.Visible = false
+
 local quickPlayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/QuickPlayGames.lua"))()
 
 local function addGameToList(gm)
-	local template = quickPlayUI:WaitForChild("List"):WaitForChild("Template")
-
 	local new = template:Clone()
 
 	new.Parent = quickPlayUI:WaitForChild("List")
 	new.GameName.Text = gm.Name
 	new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 	new.Visible = true
+	new:WaitForChild("Interact").ZIndex = 2
+	new.GameThumbnail.ZIndex = 1
+	quickPlayUI.Close.ZIndex = 1
 
 	new.Interact.MouseButton1Click:Connect(function()
 		local ui = quickPlayUI.GameInfo
 
-		ui.CanvasPosition = UDim2.new(0,0,0,0)
+		ui.Close.ZIndex = 99999
+		ui.CanvasPosition = Vector2.new(0,0,0,0)
 		ui.GameName.Text = gm.Name
 		ui.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 		ui.GameCreator.Text = "Created by " .. gm.GameCreator
@@ -1757,7 +1843,7 @@ local function addGameToList(gm)
 			notifyUser("Attempting to join " .. gm.Name .. "...", true)
 
 			local success, errMsg = pcall(function()
-				gm:JoinGame()
+				game:GetService('TeleportService'):Teleport(gm.GameID, game.Players.LocalPlayer)
 			end)
 
 			if not success and errMsg then
@@ -1798,28 +1884,7 @@ local function openQuickPlay()
 	TS:Create(LunarHub.DarkBG, SecondaryTweenInfo, {BackgroundTransparency = 0.7}):Play()
 	TS:Create(quickPlayUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
 
-	if LunarHubSettings.BlurEnabled then
-		Blur.Parent = game:GetService("Lighting")
-
-		Blur.Enabled = true
-
-		local bluropen = TS:Create(Blur, SecondaryTweenInfo, {Size = 10})
-		bluropen:Play()
-	else
-		Blur.Parent = LunarHub
-	end
-
-	local success,errMsg = pcall(function()
-		local camera = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
-
-		if camera then
-			TS:Create(camera, SecondaryTweenInfo, {FieldOfView = 40}):Play()
-		end
-	end)
-
-	if not success and errMsg then
-		warn("LunarHub // Failed to do task: ProjectLunarTask_QuickPlayZoomIn - Error Message:\n" .. errMsg)
-	end
+	inBlur()
 end
 
 local function closeQuickPlay()
@@ -1834,28 +1899,7 @@ local function closeQuickPlay()
 	TS:Create(LunarHub.DarkBG, SecondaryTweenInfo, {BackgroundTransparency = 1}):Play()
 	TS:Create(quickPlayUI, SecondaryTweenInfo, {Position = UDim2.new(-0.5,0,0.5,0)}):Play()
 
-	if LunarHubSettings.BlurEnabled then
-		Blur.Parent = game:GetService("Lighting")
-
-		Blur.Enabled = true
-
-		local blurclose = TS:Create(Blur, SecondaryTweenInfo, {Size = 0})
-		blurclose:Play()
-	else
-		Blur.Parent = LunarHub
-	end
-
-	local success,errMsg = pcall(function()
-		local camera = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
-
-		if camera then
-			TS:Create(camera, SecondaryTweenInfo, {FieldOfView = 70}):Play()
-		end
-	end)
-
-	if not success and errMsg then
-		warn("LunarHub // Failed to do task: ProjectLunarTask_QuickPlayZoomOut - Error Message:\n" .. errMsg)
-	end
+	outDeBlur()
 end
 
 local function toggleQuickPlay()
@@ -1960,7 +2004,7 @@ end)
 joinUI.Join.MouseButton1Click:Connect(function()
 	notifyUser("Attempting to join server via Lunar Hub Join Code...", true)
 
-	local gameID, serverID = translateJoinCode(joinUI.JoinCodeInput)
+	local gameID, serverID = translateJoinCode(joinUI.JoinCodeInput.Text)
 
 	if gameID and serverID then
 		local success, errMsg =  pcall(function()
@@ -1983,12 +2027,12 @@ end)
 spawn(function()
 	while wait() do
 		local fps = game:GetService("Workspace"):GetRealPhysicsFPS()
-		fpsCounter.Info.Text = tostring(fps) .. " FPS"
+		fpsCounter:WaitForChild("Info").Text = tostring(fps) .. " FPS"
 	end
 end)
 
 spawn(function()
-	while wait(0.5) do
+	while wait(0.1) do
 		if getTimeSinceBoot("min") == 0 then
 			timeElapsedUI.Time.Text = tostring(getTimeSinceBoot("sec")) .. " seconds"
 		elseif getTimeSinceBoot("min") > 60 then
@@ -1999,7 +2043,7 @@ spawn(function()
 
 		local date,dateMsg,hour = getDate()
 
-		HomeUI.Title.Text = dateMsg
+		HomeUI.Title.Text = dateMsg .. ", " .. game.Players.LocalPlayer.DisplayName
 		HomeUI.Subtitle.Text = msgToSub(hour)
 
 		HomeUI.CurrentTime.Info.Text = date
@@ -2008,5 +2052,131 @@ spawn(function()
 	end
 end)
 
-print("LunarHub // Loaded LunarHub " .. LunarHubVersion .. " in " .. os.clock() .. " seconds")
-_G.LunarHubExecuted = true
+local connectedAntiIdle
+
+local function enableAntiIdle()
+	local VU = game:GetService("VirtualUser")
+
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then
+		connectedAntiIdle = game.Players.LocalPlayer.Idled:Connect(function()
+			VU:Button2Down(Vector2.new(0,0),cam.CFrame)
+			wait(1)
+			VU:Button2Up(Vector2.new(0,0),cam.CFrame)
+		end)
+
+		notifyUser("LunarHub is currently protecting you from getting disconnected!", true)
+
+		return true
+	else
+		notifyUser("LunarHub failed to protect you from getting disconnected - Failed to find camera!", false)
+		return false
+	end
+end
+
+local function disableAntiIdle()
+	local VU = game:GetService("VirtualUser")
+
+	connectedAntiIdle:Disconnect()
+end
+
+enableAntiIdle()
+
+local function openIdle()
+	local ui = LunarHub:WaitForChild("Idle")
+
+	closeHome()
+	closeTaskbar()
+	closeQuickPlay()
+
+	ui.Visible = true
+
+	TS:Create(LunarHub:WaitForChild("DarkBG"), SecondaryTweenInfo, {BackgroundTransparency = 0.7}):Play()
+	TS:Create(ui.Title, SecondaryTweenInfo, {TextTransparency = 0}):Play()
+	TS:Create(ui.Subtitle, SecondaryTweenInfo, {TextTransparency = 0}):Play()
+
+	inBlur()
+end
+
+local function closeIdle()
+	local ui = LunarHub:WaitForChild("Idle")
+
+	TS:Create(LunarHub:WaitForChild("DarkBG"), SecondaryTweenInfo, {BackgroundTransparency = 1}):Play()
+	TS:Create(ui.Title, SecondaryTweenInfo, {TextTransparency = 1}):Play()
+	local lastTween = TS:Create(ui.Subtitle, SecondaryTweenInfo, {TextTransparency = 1})
+	lastTween:Play()
+
+	outDeBlur()
+	openTaskbar()
+
+	lastTween.Completed:Wait()
+
+	ui.Visible = false
+end
+
+local timeUntilIdle = 60
+
+UIS.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.Keyboard or input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 or input.UserInputType == Enum.UserInputType.MouseButton3 or input.UserInputType == Enum.UserInputType.MouseWheel then
+		timeUntilIdle = 60
+
+		if LunarHub:WaitForChild("Idle").Visible == true then
+			closeIdle()
+		end
+	end
+end)
+
+task.spawn(function()
+	while wait(1) do
+		if timeUntilIdle > 0 then
+			timeUntilIdle = timeUntilIdle - 1
+		end
+	end
+end)
+
+task.spawn(function()
+	while wait(1) do
+		if timeUntilIdle == 0 then
+			openIdle()
+		end
+	end
+end)
+
+if _G.LunarHubDebugMode == true then
+	notifyUser("HomeKey: " .. tostring(LunarHubSettings.HomeKeybind), true)
+	notifyUser("TaskKey: " .. tostring(LunarHubSettings.TaskbarKeybind), true)
+
+	if _G.OverrideSettings then
+		LunarHubSettings = _G.OverrideSettings
+	end
+end
+
+LunarHub:WaitForChild("Home"):WaitForChild("Shutdown"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	for i, v in pairs(LunarHub:GetChildren()) do
+		if v.Name ~= "DestroyScreen" and v.Name ~= "LunarLogo" then
+			v:Destroy()
+		end
+	end
+
+	if game:GetService("Lighting"):FindFirstChild("ProjectLunarBlur") then
+		game.Lighting:WaitForChild("ProjectLunarBlur"):Destroy()
+	end
+
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then cam.FieldOfView = 70 end
+
+	TS:Create(LunarLogo, LongTweenInfo, {Size = UDim2.new(0.5,0,0.5,0)}):Play()
+	TS:Create(LunarLogo, LongTweenInfo, {ImageColor3 = Color3.fromRGB(170,221,255)}):Play()
+	TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0}):Play()
+	LunarHub:WaitForChild("DestroyScreen").Visible = true
+
+	wait(5)
+
+	LunarHub:Destroy()
+
+	return
+end)
+
+print("LunarHub // Loaded LunarHub " .. LunarHubVersion .. " in " .. os.time() - bootTime .. " seconds")
