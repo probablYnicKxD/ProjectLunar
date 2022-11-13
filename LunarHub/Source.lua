@@ -1124,6 +1124,12 @@ local function refreshScriptLibrary()
 		new.ScriptName.Text = libraryScript.Name
 		new.ScriptDescription.Text = libraryScript.Description
 		new.ScriptAuthor.Text = "created by " .. libraryScript.Creator
+		
+		if libraryScript.Universal == true then
+			new.LayoutOrder = 0
+		else
+			new.LayoutOrder = 999999
+		end
 
 		local scriptTags = new.Tags
 
@@ -1183,7 +1189,7 @@ local function refreshScriptLibrary()
 					new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. randomGameID .. "&w=150&h=150"
 				end
 			end
-		elseif #libraryScript.SupportedGames == 0 and libraryScript.Universal == true then
+		elseif libraryScript.Universal == true then
 			new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. game.PlaceId .. "&w=768&h=432"
 		else
 			new.GameThumbnail.Image = ""
@@ -1318,6 +1324,7 @@ local function detectBestScriptForGame()
 end
 
 refreshScriptLibrary()
+refreshCustomLibrary()
 
 LunarHub.ScriptSearch.Refresh.Interact.MouseButton1Click:Connect(function()
 	refreshScriptLibrary()
@@ -1375,6 +1382,10 @@ local function searchCustomScripts()
 	end
 end
 
+local function searchPlayers()
+	--next bugfix lol
+end
+
 local function makecustomscript(name, desc, games, loadstr)
 	if checkFunctions() == false then
 		notifyUser("Failed to make custom script - Your executor does not support file saving!", false)
@@ -1414,6 +1425,8 @@ end)
 LunarHub.CustomScripts.SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 	searchCustomScripts()
 end)
+
+local alreadyConnected = false
 
 local function promptGameDetection()
 	local bestScript = detectBestScriptForGame()
@@ -1460,9 +1473,12 @@ local function promptGameDetection()
 		t:Play()
 	end
 
-	ui.Layer.Execute.MouseButton1Click:Connect(function()
-		executeScript()
-	end)
+	if not alreadyConnected then
+		ui.Layer.Execute.MouseButton1Click:Connect(function()
+			executeScript()
+			alreadyConnected = true
+		end)
+	end
 
 	UIS.InputBegan:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.Y and ui.Position == UDim2.new(0.5,0,0.25,0) then
