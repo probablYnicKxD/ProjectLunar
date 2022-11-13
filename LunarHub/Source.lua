@@ -639,7 +639,7 @@ local function refreshPlayerList()
 	for i, plr in pairs(Players) do
 		local new = template:Clone()
 
-		new.Name = plr.UserId
+		new.Name = plr.DisplayName
 		new.DisplayName.Text = plr.DisplayName
 		new.Username.Text = "@" .. plr.Name
 		new.Avatar.Image = "rbxthumb://type=AvatarHeadShot&id=" .. tostring(plr.UserId) .. "&w=420&h=420"
@@ -736,6 +736,36 @@ local function refreshPlayerList()
 	end
 end
 
+--[[
+
+--fixing soon!
+
+local function searchPlayers()
+	local query = PlayerlistUI:WaitForChild("Interactions"):WaitForChild("Search").Text
+	
+	if query then
+		local plrlist = PlayerlistUI:WaitForChild("Interactions"):WaitForChild("List")
+		
+		if plrlist then
+			for i, v in pairs(plrlist) do
+				if v.Name ~= "UIListLayout" and v.Name ~= "Placeholder" and v.Name ~= "Template" then
+					if string.find(string.lower(v.Name), string.lower(query)) then
+						v.Visible = true
+					else
+						v.Visible = false
+					end
+				end
+			end
+		end
+	end
+end
+
+PlayerlistUI:WaitForChild("Interactions"):WaitForChild("Search"):GetPropertyChangedSignal("Text"):Connect(function()
+	searchPlayers()
+end)
+
+]]--
+
 game.Players.PlayerAdded:Connect(function()
 	wait()
 	refreshPlayerList()
@@ -750,7 +780,7 @@ end)
 
 local fpsCounter = HomeUI.FPS
 
---spawn at bottom of code
+--spawn function at bottom of code
 
 --[[ HOME ]]--
 
