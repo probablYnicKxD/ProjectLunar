@@ -160,23 +160,6 @@ scripts.InfiniteYield = {
 	}
 }
 
-scripts.TestScript = {
-	Name = "LunarHub Test Script",
-	Description = "This is a test script for LunarHub. If you are in a public release of this script and you can see this script, please contact lunaR_nicK#6800 on Discord, or report it in the Project Lunar Discord server.",
-	LoadstringScript = "loadstring(game:HttpGet('https://pastebin.com/raw/nRzYiwuL'))()",
-	SupportedGames = {},
-	MultipleGames = true,
-	Universal = true,
-	KeySys = false,
-	Creator = "probablYnicK",
-	Tags = {
-		"VerifiedScript",
-		"VerifiedCreator",
-		"PositiveReviews",
-		"New"
-	}
-}
-
 scripts.CMDX = {
 	Name = "CMDX",
 	Description = "With over 600+ commands, CMDX is one of the BEST command line scripts on Roblox. Some say it's better than Infinite Yield! Made by a development team, it's guaranteed to get you an advantage in every game.",
