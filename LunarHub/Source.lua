@@ -1,10 +1,10 @@
 --[[
 
-  	LunarHub - Version 0.0.0f Testing
-  	
-  	If you see this before its announce/release, congratulations! you have successfully stalked my github.
+  	LunarHub - Version 0.0.1 Alpha Release
   
   	Made by probablYnicK
+
+	Open source because i don't really care if you copy the script, as long as you give me credit.
   
   	UI design inspired by shlexware's design of Sirius and DomainX!
 
@@ -78,7 +78,7 @@ local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local RS = game:GetService("ReplicatedStorage")
 
-local LunarHubVersion = "v0.0.0f Testing"
+local LunarHubVersion = "v0.0.1 Alpha"
 
 local latest = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion")
 
