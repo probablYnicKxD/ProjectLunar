@@ -225,4 +225,22 @@ scripts.BetterBypasser = {
 	}
 }
 
+scripts.DOORSPlamen = {
+	Name = "DOORS Entity Summoner GUI",
+	Description = "The #1 DOORS entity spawner/summoner. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/plamen6789/DoorsEntitySummonerGUI/main/EntityGUI"))()',
+	SupportedGames = {
+		6516141723,
+	},
+	MultipleGames = false,
+	Universal = false,
+	KeySys = false,
+	Creator = "plamen6789",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
