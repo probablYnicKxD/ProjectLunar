@@ -245,4 +245,22 @@ scripts.DOORSPlamen = {
 	}
 }
 
+scripts.DOORSSeekSpawner = {
+	Name = "DOORS Seek Spawner",
+	Description = "A small script that spawns Seek in the popular horror game, DOORS by LSPLASH. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://rawscripts.net/raw/DOORS-Spawn-Seek-6993"))()',
+	SupportedGames = {
+		6516141723,
+	},
+	MultipleGames = false,
+	Universal = false,
+	KeySys = false,
+	Creator = "Dreadmania",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
