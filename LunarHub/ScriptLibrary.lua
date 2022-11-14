@@ -281,4 +281,22 @@ scripts.DOORSSummonEntities = {
 	}
 }
 
+scripts.PetSimXPasta = {
+	Name = "Pasta V2",
+	Description = "A popular Pet Simulator X script by Shaymin. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ChronoAccelerator/CometRestoration/main/Comet.lua"))()',
+	SupportedGames = {
+		6284583030,
+	},
+	MultipleGames = false,
+	Universal = false,
+	KeySys = false,
+	Creator = "Shaymin",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
