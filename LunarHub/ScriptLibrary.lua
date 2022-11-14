@@ -1,12 +1,14 @@
 --[[
 
-    Script Library for LunarHub, an upcoming script hub to Project Lunar.
+    Script Library for LunarHub.
 
-    Releasing soon.
+    now released!
 
     SCRIPTS FROM https://scriptblox.com
 
     CONTACT lunaR_nicK#6800 ON DISCORD FOR SCRIPT REMOVAL!
+
+    suggest scripts in https://discord.io/LunarCrocs
 
 ]]--
 
