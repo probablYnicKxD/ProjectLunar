@@ -1,10 +1,10 @@
 --[[
 
-  	LunarHub - Version 0.0.1 Alpha Release
+  	LunarHub - Version 0.0.1 Alpha
+  	
+  	open-source because i don't really care if you copy SOME parts of the script, just don't copy the whole thing! also give me credit pls lol
   
   	Made by probablYnicK
-
-	Open source because i don't really care if you copy the script, as long as you give me credit.
   
   	UI design inspired by shlexware's design of Sirius and DomainX!
 
@@ -16,35 +16,22 @@ local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
 
+local LunarHubVersion = "v0.0.1 Alpha"
+
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
-	if msg == "lunar:Destroy()" then
-		if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
-			game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
-			local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+	if msg ~= "lunar:Destroy()" then return end
 
-			if cam then cam.FieldOfView = 70 end
+	if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
+		game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
+		local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
 
-			local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
+		if cam then cam.FieldOfView = 70 end
 
-			if blur then blur:Destroy() end
+		local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
 
-			warn("LunarHub // Destroyed interface.")
-		end
-	elseif msg == "lunar:Reload()" or msg == "lunar:Update()" then
-		if game.CoreGui:FindFirstChild("ProjectLunar - LunarHub") then
-			game.CoreGui["ProjectLunar - LunarHub"]:Destroy()
-			local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+		if blur then blur:Destroy() end
 
-			if cam then cam.FieldOfView = 70 end
-
-			local blur = game.Lighting:FindFirstChild("ProjectLunarBlur")
-
-			if blur then blur:Destroy() end
-
-			warn("LunarHub // Destroyed interface, updating script!")
-		end
-			
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/Source.lua"))()	
+		warn("LunarHub // Destroyed interface.")
 	end
 end)
 
@@ -70,11 +57,11 @@ local LunarHub = game:GetObjects("rbxassetid://11520374479")[1]
 local yield = LunarHub:WaitForChild("Home"):WaitForChild("Interactions"):WaitForChild("Server"):WaitForChild("Players")
 local second_Yield = LunarHub:WaitForChild("Playerlist"):WaitForChild("Interactions"):WaitForChild("List"):WaitForChild("Template"):WaitForChild("Interactions"):WaitForChild("Teleport"):WaitForChild("Shadow"):WaitForChild("UICorner")
 
-repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG
-
 local additionalYield = 7.5
 
 wait(additionalYield)
+
+repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG and LunarHub.Character
 
 warn("LunarHub // UI loaded in " .. os.time() - bootTime .. " seconds")
 
@@ -89,11 +76,16 @@ if not LocalPlayer then
 	wait(1)
 end
 
+local OriginalCharacterProperties = {
+	WalkSpeed = LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed,
+	JumpPower = LocalPlayer.Character:WaitForChild("Humanoid").JumpPower,
+	FlightSpeed = 1,
+	FieldOfView = game.Workspace.CurrentCamera.FieldOfView or game.Workspace.Camera.FieldOfView or game.Workspace:FindFirstChildWhichIsA("Camera").FieldOfView
+}
+
 local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local RS = game:GetService("ReplicatedStorage")
-
-local LunarHubVersion = "v0.0.1 Alpha"
 
 local latest = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion")
 
@@ -154,8 +146,6 @@ local LunarHubThemes = {
 	ECLIPSE = {}
 }
 
---THEMES ARE COMING SOON!--
-
 --[[ Other ]]--
 
 local function getStatus(id)
@@ -215,6 +205,7 @@ local function activateBlur()
 
 	local activation = TS:Create(blur, SecondaryTweenInfo, {Size = 10})
 	activation:Play()
+	activation.Completed:Wait()
 end
 
 local function deactivateBlur()
@@ -224,6 +215,9 @@ local function deactivateBlur()
 
 	local deactivation = TS:Create(blur, SecondaryTweenInfo, {Size = 0})
 	deactivation:Play()
+	deactivation.Completed:Wait()
+
+	blur.Enabled = false
 end
 
 local function camZoomIn()
@@ -243,13 +237,23 @@ local function camZoomOut()
 end
 
 local function inBlur()
-	activateBlur()
-	camZoomIn()
+	task.spawn(function()
+		activateBlur()
+	end)
+
+	task.spawn(function()
+		camZoomIn()
+	end)
 end
 
 local function outDeBlur()
-	deactivateBlur()
-	camZoomOut()
+	task.spawn(function()
+		deactivateBlur()
+	end)
+
+	task.spawn(function()
+		camZoomOut()
+	end)
 end
 
 local function openHome()
@@ -302,12 +306,18 @@ local lltween = TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0})
 lltween:Play()
 lltween.Completed:Wait()
 
+wait(1)
+
 local lltween2 = TS:Create(LunarLogo, LongTweenInfo, {ImageColor3 = Color3.fromRGB(0,0,0)})
 lltween2:Play()
 lltween2.Completed:Wait()
 
+wait(1)
+
 local lltween3 = TS:Create(LunarLogo, LongTweenInfo, {ImageTransparency = 0.7, Size = UDim2.new(10,0,10,0)})
 lltween3:Play()
+
+openHome()
 
 --[[ Utility Functions ]]--
 
@@ -639,7 +649,7 @@ local function refreshPlayerList()
 	for i, plr in pairs(Players) do
 		local new = template:Clone()
 
-		new.Name = plr.DisplayName
+		new.Name = plr.UserId
 		new.DisplayName.Text = plr.DisplayName
 		new.Username.Text = "@" .. plr.Name
 		new.Avatar.Image = "rbxthumb://type=AvatarHeadShot&id=" .. tostring(plr.UserId) .. "&w=420&h=420"
@@ -736,36 +746,6 @@ local function refreshPlayerList()
 	end
 end
 
---[[
-
---fixing soon!
-
-local function searchPlayers()
-	local query = PlayerlistUI:WaitForChild("Interactions"):WaitForChild("Search").Text
-	
-	if query then
-		local plrlist = PlayerlistUI:WaitForChild("Interactions"):WaitForChild("List")
-		
-		if plrlist then
-			for i, v in pairs(plrlist) do
-				if v.Name ~= "UIListLayout" and v.Name ~= "Placeholder" and v.Name ~= "Template" then
-					if string.find(string.lower(v.Name), string.lower(query)) then
-						v.Visible = true
-					else
-						v.Visible = false
-					end
-				end
-			end
-		end
-	end
-end
-
-PlayerlistUI:WaitForChild("Interactions"):WaitForChild("Search"):GetPropertyChangedSignal("Text"):Connect(function()
-	searchPlayers()
-end)
-
-]]--
-
 game.Players.PlayerAdded:Connect(function()
 	wait()
 	refreshPlayerList()
@@ -780,7 +760,7 @@ end)
 
 local fpsCounter = HomeUI.FPS
 
---spawn function at bottom of code
+--spawn at bottom of code
 
 --[[ HOME ]]--
 
@@ -1154,14 +1134,11 @@ local function refreshScriptLibrary()
 		new.ScriptName.Text = libraryScript.Name
 		new.ScriptDescription.Text = libraryScript.Description
 		new.ScriptAuthor.Text = "created by " .. libraryScript.Creator
-		
-		if libraryScript.Universal == true then
-			new.LayoutOrder = 0
-		else
-			new.LayoutOrder = 999999
-		end
 
 		local scriptTags = new.Tags
+
+
+		scriptTags.CanvasPosition = Vector2.new(686, 0) --technically makes them visible
 
 		for i, already in pairs(scriptTags:GetChildren()) do
 			if already:IsA("Frame") and already.Name ~= "UIListLayout" and already.Name ~= "Placeholder" then
@@ -1174,11 +1151,14 @@ local function refreshScriptLibrary()
 
 			if tagInstance then
 				tagInstance.Visible = true
+			else
+				print("Invalid tag: " .. tag)
 			end
 		end
 
 		if libraryScript.Universal == true then
 			new.Universal.Visible = true
+			new.LayoutOrder = 999999
 		else
 			new.Universal.Visible = false
 		end
@@ -1219,7 +1199,7 @@ local function refreshScriptLibrary()
 					new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. randomGameID .. "&w=150&h=150"
 				end
 			end
-		elseif libraryScript.Universal == true then
+		elseif #libraryScript.SupportedGames == 0 and libraryScript.Universal == true then
 			new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. game.PlaceId .. "&w=768&h=432"
 		else
 			new.GameThumbnail.Image = ""
@@ -1354,7 +1334,6 @@ local function detectBestScriptForGame()
 end
 
 refreshScriptLibrary()
-refreshCustomLibrary()
 
 LunarHub.ScriptSearch.Refresh.Interact.MouseButton1Click:Connect(function()
 	refreshScriptLibrary()
@@ -1412,10 +1391,6 @@ local function searchCustomScripts()
 	end
 end
 
-local function searchPlayers()
-	--next bugfix lol
-end
-
 local function makecustomscript(name, desc, games, loadstr)
 	if checkFunctions() == false then
 		notifyUser("Failed to make custom script - Your executor does not support file saving!", false)
@@ -1456,7 +1431,7 @@ LunarHub.CustomScripts.SearchBox:GetPropertyChangedSignal("Text"):Connect(functi
 	searchCustomScripts()
 end)
 
-local alreadyConnected = false
+local alreadyconnected = false
 
 local function promptGameDetection()
 	local bestScript = detectBestScriptForGame()
@@ -1503,10 +1478,9 @@ local function promptGameDetection()
 		t:Play()
 	end
 
-	if not alreadyConnected then
+	if alreadyconnected == false then
 		ui.Layer.Execute.MouseButton1Click:Connect(function()
 			executeScript()
-			alreadyConnected = true
 		end)
 	end
 
@@ -1609,18 +1583,13 @@ LunarHub.Taskbar.Buttons.Playerlist.Interact.MouseButton1Click:Connect(function(
 	end
 end)
 
-if firstTime == true then
-	local taskKey = string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14)
-	local homeKey = string.sub(tostring(LunarHubSettings.HomeKeybind), 14)
+local taskKey = string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14)
+local homeKey = string.sub(tostring(LunarHubSettings.HomeKeybind), 14)
 
-	LunarHub.Taskbar.FirstTime.Visible = true
-	HomeUI.FirstTime.Visible = true
-	LunarHub.Taskbar.FirstTime.Text = "TAP '" .. taskKey .. "' TO OPEN/CLOSE"
-	HomeUI.FirstTime.Text = "TAP '" .. homeKey .. "' TO OPEN/CLOSE"
-else
-	LunarHub.Taskbar.FirstTime.Visible = false
-	HomeUI.FirstTime.Visible = false
-end
+LunarHub.Taskbar.FirstTime.Visible = true
+HomeUI.FirstTime.Visible = true
+LunarHub.Taskbar.FirstTime.Text = "TAP '" .. taskKey .. "' TO OPEN/CLOSE"
+HomeUI.FirstTime.Text = "TAP '" .. homeKey .. "' TO OPEN/CLOSE"
 
 local function openTaskbar()
 	local taskbar = LunarHub.Taskbar
@@ -1827,7 +1796,7 @@ end)
 UIS.InputBegan:Connect(function(input)
 	if sui:WaitForChild("HomeKeybind"):WaitForChild("KeybindFrame"):WaitForChild("CurrentBind").Text == "Press Key" then
 		if input.UserInputType == Enum.UserInputType.Keyboard then
-			if input.KeyCode == LunarHubSettings.TaskbarKeybind or input.KeyCode == LunarHubSettings.HomeKeybind then
+			if input.KeyCode == LunarHubSettings.TaskbarKeybind then
 				notifyUser("You cannot set two keybinds to the same value!", false)
 				return
 			end
@@ -1844,7 +1813,7 @@ UIS.InputBegan:Connect(function(input)
 
 	if sui:WaitForChild("TaskbarKeybind"):WaitForChild("KeybindFrame"):WaitForChild("CurrentBind").Text == "Press Key" then
 		if input.UserInputType == Enum.UserInputType.Keyboard then
-			if input.KeyCode == LunarHubSettings.TaskbarKeybind or input.KeyCode == LunarHubSettings.HomeKeybind then
+			if input.KeyCode == LunarHubSettings.HomeKeybind then
 				notifyUser("You cannot set two keybinds to the same value!", false)
 				return
 			end
@@ -2153,19 +2122,26 @@ local function openIdle()
 end
 
 local function closeIdle()
-	local ui = LunarHub:WaitForChild("Idle")
+	task.spawn(function()
+		local ui = LunarHub:WaitForChild("Idle")
 
-	TS:Create(LunarHub:WaitForChild("DarkBG"), SecondaryTweenInfo, {BackgroundTransparency = 1}):Play()
-	TS:Create(ui.Title, SecondaryTweenInfo, {TextTransparency = 1}):Play()
-	local lastTween = TS:Create(ui.Subtitle, SecondaryTweenInfo, {TextTransparency = 1})
-	lastTween:Play()
+		ui.Title.Text = "Welcome back, " .. game.Players.LocalPlayer.DisplayName .. "!"
+		ui.Subtitle.Text = "We kept you from getting disconnected."
+		
+		wait(1.5)
 
-	outDeBlur()
-	openTaskbar()
-
-	lastTween.Completed:Wait()
-
-	ui.Visible = false
+		TS:Create(LunarHub:WaitForChild("DarkBG"), SecondaryTweenInfo, {BackgroundTransparency = 1}):Play()
+		TS:Create(ui.Title, SecondaryTweenInfo, {TextTransparency = 1}):Play()
+		local lastTween = TS:Create(ui.Subtitle, SecondaryTweenInfo, {TextTransparency = 1})
+		lastTween:Play()
+	
+		outDeBlur()
+		openTaskbar()
+	
+		lastTween.Completed:Wait()
+	
+		ui.Visible = false
+	end)
 end
 
 local timeUntilIdle = 60
@@ -2180,6 +2156,458 @@ UIS.InputBegan:Connect(function(input)
 	end
 end)
 
+--[[ Character UI ]]--
+
+local charUI = LunarHub:WaitForChild("Character")
+
+local charUIOpen = false
+
+TaskbarUI:WaitForChild("Buttons"):WaitForChild("Character"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	if charUIOpen == true then
+		TS:Create(charUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,2,-90)}):Play()
+		charUIOpen = false
+	else
+		TS:Create(charUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1,-90)}):Play()
+		charUIOpen = true
+	end
+end)
+
+local charinter = charUI:WaitForChild("Interactions")
+
+local mouse = game.Players.LocalPlayer:GetMouse()
+
+local function tweenSlider(frame, props)
+	TS:Create(frame, SecondaryTweenInfo, props):Play()
+end
+
+local function activateSlider(slider, name, minvalue, maxvalue, callback)
+	local Value
+	local moveconnection
+	local releaseconnection
+
+	slider.Interact.MouseButton1Down:Connect(function()
+		Value = math.floor((((tonumber(maxvalue) - tonumber(minvalue)) / 224) * slider.Progress.AbsoluteSize.X) + tonumber(minvalue)) or 0
+		pcall(function()
+			callback(Value)
+		end)
+		tweenSlider(slider.Progress, {Size = UDim2.new(0, math.clamp(mouse.X - slider.Progress.AbsolutePosition.X, 0, 224), 1, 0)})
+		moveconnection = mouse.Move:Connect(function()
+			slider.Information.Text = Value .. " " .. name
+			Value = math.floor((((tonumber(maxvalue) - tonumber(minvalue)) / 224) * slider.Progress.AbsoluteSize.X) + tonumber(minvalue))
+			pcall(function()
+				callback(Value)
+			end)
+			tweenSlider(slider.Progress, {Size = UDim2.new(0, math.clamp(mouse.X - slider.Progress.AbsolutePosition.X, 0, 224), 1, 0)})
+		end)
+		releaseconnection = UIS.InputEnded:Connect(function(Mouse)
+			if Mouse.UserInputType == Enum.UserInputType.MouseButton1 then
+				Value = math.floor((((tonumber(maxvalue) - tonumber(minvalue)) / 224) * slider.Progress.AbsoluteSize.X) + tonumber(minvalue))
+				pcall(function()
+					callback(Value)
+				end)
+				tweenSlider(slider.Progress, {Size = UDim2.new(0, math.clamp(mouse.X - slider.Progress.AbsolutePosition.X, 0, 224), 1, 0)})
+				moveconnection:Disconnect()
+				releaseconnection:Disconnect()
+			end
+		end)
+	end)
+end
+
+activateSlider(charinter:WaitForChild("FOVSlider"), "field of view", 70, 150, function(val)
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then
+		TS:Create(cam, SecondaryTweenInfo, {FieldOfView = val}):Play()
+	end
+end)
+
+activateSlider(charinter:WaitForChild("JumpSlider"), "jump power", 50, 300, function(val)
+	local hum = game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+
+	if hum then
+		hum.JumpPower = val
+	end
+end)
+
+activateSlider(charinter:WaitForChild("SpeedSlider"), "walk speed", 16, 500, function(val)
+	local hum = game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+
+	if hum then
+		hum.WalkSpeed = val
+	end
+end)
+
+local LunarHubFlySpeed = 50
+
+--fly script by unknown, too lazy to make one myself lol
+
+task.spawn(function()
+	local plr = game.Players.LocalPlayer
+	local torso = plr.Character.HumanoidRootPart or plr.Character.Torso
+	local flying = true
+	local deb = true
+	local ctrl = {f = 0, b = 0, l = 0, r = 0}
+	local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+	local speed = 0
+
+	local function Fly()
+		local bg = Instance.new("BodyGyro", torso)
+		bg.P = 9e4
+		bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+		bg.cframe = torso.CFrame
+		local bv = Instance.new("BodyVelocity", torso)
+		bv.velocity = Vector3.new(0,0.1,0)
+		bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+		repeat wait()
+			plr.Character.Humanoid.PlatformStand = true
+			if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+				speed = speed+.5+(speed/LunarHubFlySpeed)
+				if speed > LunarHubFlySpeed then
+					speed = LunarHubFlySpeed
+				end
+			elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+				speed = speed-1
+				if speed < 0 then
+					speed = 0
+				end
+			end
+			if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+				bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).Position) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+				lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+			elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+				bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).Position) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+			else
+				bv.velocity = Vector3.new(0,0.1,0)
+			end
+			bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/LunarHubFlySpeed),0,0)
+		until not flying
+		ctrl = {f = 0, b = 0, l = 0, r = 0}
+		lastctrl = {f = 0, b = 0, l = 0, r = 0}
+		speed = 0
+		bg:Destroy()
+		bv:Destroy()
+		plr.Character.Humanoid.PlatformStand = false
+	end
+	mouse.KeyDown:connect(function(key)
+		if key:lower() == "w" then
+			ctrl.f = 1
+		elseif key:lower() == "s" then
+			ctrl.b = -1
+		elseif key:lower() == "a" then
+			ctrl.l = -1
+		elseif key:lower() == "d" then
+			ctrl.r = 1
+		end
+	end)
+	mouse.KeyUp:connect(function(key)
+		if key:lower() == "w" then
+			ctrl.f = 0
+		elseif key:lower() == "s" then
+			ctrl.b = 0
+		elseif key:lower() == "a" then
+			ctrl.l = 0
+		elseif key:lower() == "d" then
+			ctrl.r = 0
+		end
+	end)
+
+	charinter:WaitForChild("List1"):WaitForChild("Flight").Visible = false
+end)
+
+charinter:WaitForChild("FlightSlider").Visible = false
+charinter:WaitForChild("FOVSlider").Position = charinter:WaitForChild("FlightSlider").Position
+charinter:WaitForChild("FOVSlider"):WaitForChild("Progress").BackgroundColor3 = Color3.fromRGB(255,0,0)
+charinter:WaitForChild("FOVSlider"):WaitForChild("UIStroke").Color = Color3.fromRGB(255,0,0)
+
+local clipped = true
+local noclipconnection
+
+local function noclip()
+	local success, errMsg = pcall(function()
+		clipped = false
+		wait(0.1)
+		local function nocliploop()
+			if clipped == false and LocalPlayer.Character ~= nil then
+				for _, child in pairs(LocalPlayer.Character:GetDescendants()) do
+					if child:IsA("BasePart") and child.CanCollide == true then
+						child.CanCollide = false
+					end
+				end
+			end
+		end
+		noclipconnection = game:GetService('RunService').Stepped:Connect(nocliploop)
+	end)
+
+	if success then
+		notifyUser("Successfully enabled noclip!", true)
+	elseif not success and errMsg then
+		warn("LunarHub // Failed to enable noclip - Error Message:\n" .. errMsg)
+		notifyUser("Failed to enable noclip - Error message shown in Dev Console [F9]", false)
+	end
+end
+
+function clip()
+	local success, errMsg = pcall(function()
+		if noclipconnection then
+			noclipconnection:Disconnect()
+		end
+		clipped = true
+	end)
+
+	if success then
+		notifyUser("Successfully disabled noclip!", true)
+	elseif not success and errMsg then
+		warn("LunarHub // Failed to disable noclip - Error Message:\n" .. errMsg)
+		notifyUser("Failed to disable noclip - Error message shown in Dev Console [F9]", false)
+	end
+end
+
+local noclipbutton = charinter:WaitForChild("List1"):WaitForChild("Noclip")
+
+TS:Create(noclipbutton, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+TS:Create(noclipbutton.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(50, 50, 50)}):Play()
+
+charinter:WaitForChild("List1"):WaitForChild("Noclip"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	local button = charinter:WaitForChild("List1"):WaitForChild("Noclip")
+
+	if clipped == false then
+		TS:Create(button, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+		TS:Create(button.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(50, 50, 50)}):Play()
+		clip()
+	else
+		TS:Create(button, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 255, 127)}):Play()
+		TS:Create(button.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(0, 255, 127)}):Play()
+		noclip()
+	end
+end)
+
+local function refresh()
+	notifyUser("Refreshing character... This can take a few seconds!", true)
+	local success,errMsg = pcall(function()
+		local prevpos = LocalPlayer.Character.HumanoidRootPart.CFrame
+		LocalPlayer.Character.Humanoid.Health = 0
+		if LocalPlayer.Character:FindFirstChild("Head") then
+			LocalPlayer.Character.Head:Destroy()
+		end
+		LocalPlayer.CharacterAdded:Wait()
+		LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+		LocalPlayer.Character.HumanoidRootPart.CFrame = prevpos
+	end)
+
+	if success then
+		notifyUser("Successfully refreshed your character!", true)
+	elseif not success and errMsg then
+		notifyUser("Failed to refresh your character - Error message shown in Dev Console [F9]", false)
+		warn("LunarHub // Failed to refresh " .. LocalPlayer.DisplayName .. "'s character - Error Message:\n" .. errMsg)
+	end
+end
+
+local function respawn()
+	notifyUser("Respawning character... This can take a few seconds!", true)
+	local success,errMsg = pcall(function()
+		local Character = LocalPlayer.Character
+		if Character:FindFirstChildOfClass("Humanoid") then 
+			Character:FindFirstChildOfClass("Humanoid"):ChangeState(15) 
+		end
+		Character:ClearAllChildren()
+		local newChar = Instance.new("Model")
+		newChar.Parent = workspace
+		LocalPlayer.Character = newChar
+		wait()
+		LocalPlayer.Character = Character
+		newChar:Destroy()
+	end)
+
+	if success then
+		notifyUser("Successfully respawned your character!", true)
+	elseif not success and errMsg then
+		notifyUser("Failed to respawn your character - Error message shown in Dev Console [F9]", false)
+		warn("LunarHub // Failed to respawn " .. LocalPlayer.DisplayName .. "'s character - Error Message:\n" .. errMsg)
+	end
+end
+
+local function toggleDay()
+	local lighting = game:GetService("Lighting")
+
+	if lighting.ClockTime == 12 then
+		lighting.TimeOfDay = 0
+		notifyUser("Successfully changed to night time.", true)
+		return false
+	else
+		lighting.TimeOfDay = 12
+		notifyUser("Successfully changed to day time.", true)
+		return true
+	end
+end
+
+local espEnabled = false
+
+local addedconnection
+
+local function newESP(plr)
+	local newHighlight = Instance.new("Highlight")
+
+	if plr.Character then
+		newHighlight.Parent = plr.Character
+
+		newHighlight.Archivable = true
+		newHighlight.Adornee = plr.Character
+		newHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+		newHighlight.Enabled = true
+		newHighlight.FillColor = Color3.fromRGB(170, 221, 255)
+		newHighlight.FillTransparency = 0
+		newHighlight.Name = "LunarHubESPHighlight"
+		newHighlight.OutlineColor = Color3.fromRGB(0,0,0)
+		newHighlight.OutlineTransparency = 0
+		
+		return newHighlight
+	else
+		newHighlight:Destroy()
+		return nil
+	end
+end
+
+local function enableESP()
+	for i, plr in pairs(game.Players:GetPlayers()) do
+		newESP(plr)
+	end
+	
+	addedconnection = game.Players.PlayerAdded:Connect(function(plr)
+		wait(2)
+		
+		newESP(plr)
+	end)
+	
+	espEnabled = true
+	
+	notifyUser("Successfully enabled ESP!", true)
+	
+	--no need for a connection when they leave as when they leave their character automatically removes the ESP highlight!
+end
+
+local function disableESP()
+	for i, plr in pairs(game.Players:GetPlayers()) do
+		if plr.Character and plr.Character:FindFirstChild("LunarHubESPHighlight") then
+			plr.Character.LunarHubESPHighlight:Destroy()
+		end
+	end
+	
+	if addedconnection then
+		addedconnection:Disconnect()
+	end
+	
+	espEnabled = false
+	
+	notifyUser("Successfully disabled ESP!", true)
+end
+
+local function toggleESP()
+	if espEnabled == true then
+		disableESP()
+	else
+		enableESP()
+	end
+end
+
+local audioDisabled = false
+
+local function toggleAudio()
+	if audioDisabled == false then
+		for i, v in pairs(game.Workspace:GetDescendants()) do
+			if v:IsA("Sound") then
+				local new = Instance.new("IntValue", v)
+				new.Name = "LunarHubLastVolume"
+				new.Value = v.Volume
+
+				wait()
+
+				v.Volume = 0
+			end
+		end
+
+		notifyUser("Attempted to disable workspace audio!", true)
+		audioDisabled = true
+	else
+		for i, v in pairs(game:GetDescendants()) do
+			if v:IsA("Sound") then
+				if v:FindFirstChild("LunarHubLastVolume") then
+					v.Volume = v.LunarHubLastVolume.Value
+				end
+			end
+		end
+
+		notifyUser("Attempted to enable workspace audio!", true)
+		audioDisabled = false
+	end
+end
+
+local listone = charinter:WaitForChild("List1")
+local listtwo = charinter:WaitForChild("List2")
+
+listone:WaitForChild("Refresh"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	refresh()
+end)
+
+listtwo:WaitForChild("Respawn"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	respawn()
+end)
+
+listtwo:WaitForChild("Night"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	local daytime = toggleDay()
+
+	if daytime then
+		TS:Create(listtwo.Night, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(255,255,0)}):Play()
+		TS:Create(listtwo.Night.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(255,255,0)}):Play()
+		listtwo.Night.Icon.Image = "rbxassetid://9134778004"
+		listtwo.Night.Icon.ImageRectOffset = Vector2.new(0, 0)
+		listtwo.Night.Icon.ImageRectSize = Vector2.new(0, 0)
+		listtwo.Night.Icon.Rotation = 0
+	else
+		TS:Create(listtwo.Night, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(0,0,39)}):Play()
+		TS:Create(listtwo.Night.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(0, 0, 39)}):Play()
+		listtwo.Night.Icon.Image = "rbxassetid://3926307971"
+		listtwo.Night.Icon.ImageRectOffset = Vector2.new(684, 84)
+		listtwo.Night.Icon.ImageRectSize = Vector2.new(36, 36)
+		listtwo.Night.Icon.Rotation = 180
+	end
+end)
+
+listtwo:WaitForChild("Audio"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	task.spawn(function()
+		toggleAudio()
+
+		wait()
+
+		if audioDisabled then
+			TS:Create(listtwo.Audio, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(100,100,100)}):Play()
+			TS:Create(listtwo.Audio.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(100,100,100)}):Play()
+			listtwo.Audio.Icon.Image = "rbxassetid://9134774810"
+			listtwo.Audio.Icon.ImageRectOffset = Vector2.new(0, 0)
+			listtwo.Audio.Icon.ImageRectSize = Vector2.new(0, 0)
+		else
+			TS:Create(listtwo.Audio, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(85, 0, 255)}):Play()
+			TS:Create(listtwo.Audio.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(85, 0, 255)}):Play()
+			listtwo.Audio.Icon.Image = "rbxassetid://3926307971"
+			listtwo.Audio.Icon.ImageRectOffset = Vector2.new(684, 324)
+			listtwo.Audio.Icon.ImageRectSize = Vector2.new(36, 36)
+		end
+	end)
+end)
+
+listone:WaitForChild("ESP"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	toggleESP()
+	
+	wait()
+	
+	if espEnabled == false then
+		TS:Create(listone.ESP, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(100,100,100)}):Play()
+		TS:Create(listone.ESP.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(100,100,100)}):Play()
+	else
+		TS:Create(listone.ESP, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 0, 255)}):Play()
+		TS:Create(listone.ESP.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(0, 0, 255)}):Play()
+	end
+end)
+
 task.spawn(function()
 	while wait(1) do
 		if timeUntilIdle > 0 then
@@ -2190,7 +2618,7 @@ end)
 
 task.spawn(function()
 	while wait(1) do
-		if timeUntilIdle == 0 then
+		if timeUntilIdle == 0 and LunarHub:WaitForChild("Idle").Visible == false then
 			openIdle()
 		end
 	end
@@ -2218,7 +2646,7 @@ LunarHub:WaitForChild("Home"):WaitForChild("Shutdown"):WaitForChild("Interact").
 
 	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
 
-	if cam then cam.FieldOfView = 70 end
+	if cam then cam.FieldOfView = 70 else warn("LunarHub // Could not find camera!") end
 
 	TS:Create(LunarLogo, LongTweenInfo, {Size = UDim2.new(0.5,0,0.5,0)}):Play()
 	TS:Create(LunarLogo, LongTweenInfo, {ImageColor3 = Color3.fromRGB(170,221,255)}):Play()
