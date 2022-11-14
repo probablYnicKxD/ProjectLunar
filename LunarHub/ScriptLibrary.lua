@@ -263,4 +263,22 @@ scripts.DOORSSeekSpawner = {
 	}
 }
 
+scripts.DOORSSummonEntities = {
+	Name = "DOORS Summon Entities V4",
+	Description = "Another Summon Entities script by ChronoAccelerator. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ChronoAccelerator/CometRestoration/main/Comet.lua"))()',
+	SupportedGames = {
+		6516141723,
+	},
+	MultipleGames = false,
+	Universal = false,
+	KeySys = false,
+	Creator = "ChronoAccelerator",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+	}
+}
+
 return scripts
