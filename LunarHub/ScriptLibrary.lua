@@ -198,12 +198,12 @@ scripts.SimpleSpy = {
 scripts.DexExplorer = {
 	Name = "Dex Explorer",
 	Description = "Roblox's most popular instance explorer for every single game on Roblox. Execute it right here, right now, on LunarHub.",
-	LoadstringScript = 'loadstring(game:HttpGet("https://pastebin.com/raw/fPP8bZ8Z"))()',
+	LoadstringScript = 'loadstring(game:GetObjects("rbxassetid://2180084478")[1].Source)()',
 	SupportedGames = {},
 	MultipleGames = true,
 	Universal = true,
 	KeySys = false,
-	Creator = "Dex",
+	Creator = "Moon",
 	Tags = {
 		"VerifiedScript",
 		"VerifiedCreator",
