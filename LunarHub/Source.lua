@@ -87,7 +87,7 @@ local UIS = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
 local RS = game:GetService("ReplicatedStorage")
 
-local latest = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion")
+local latest = loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/latestversion.lua"))()
 
 local req = nil
 
@@ -1854,7 +1854,8 @@ local function addGameToList(gm)
 		ui.GameName.Text = gm.Name
 		ui.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 		ui.GameCreator.Text = "Created by " .. gm.GameCreator
-		ui.GameDesc.Text = "DESCRIPTIONS COMING SOON"
+		ui.GameDesc.RichText = true
+		ui.GameDesc.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Description
 
 		TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
 
