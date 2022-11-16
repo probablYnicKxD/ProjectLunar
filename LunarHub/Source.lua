@@ -167,11 +167,8 @@ local function getStatus(id)
 end
 
 local function getGameName()
-	if game.Name == "Game" then
-		return game:GetFullName()
-	else
-		return game.Name
-	end
+	local assetInfo = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+	return assetInfo.Name
 end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
