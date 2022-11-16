@@ -16,7 +16,7 @@ local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
 
-local LunarHubVersion = "v0.0.1 Alpha"
+local LunarHubVersion = "v0.0.1a Alpha"
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
 	if msg ~= "lunar:Destroy()" then return end
