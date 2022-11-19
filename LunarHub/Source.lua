@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.1a Alpha
+  	LunarHub - Version 0.0.2 Alpha
   	
   	open-source because i really don't care if you copy SOME parts of the script, just not all of it.
   	
