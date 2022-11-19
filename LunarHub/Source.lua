@@ -1,8 +1,10 @@
 --[[
 
-  	LunarHub - Version 0.0.1 Alpha
+  	LunarHub - Version 0.0.1a Alpha
   	
-  	open-source because i don't really care if you copy SOME parts of the script, just don't copy the whole thing! also give me credit pls lol
+  	open-source because i really don't care if you copy SOME parts of the script, just not all of it.
+  	
+  	also please give my credit! ty!
   
   	Made by probablYnicK
   
@@ -16,7 +18,7 @@ local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
 
-local LunarHubVersion = "v0.0.1a Alpha"
+local LunarHubVersion = "v0.0.2 Alpha"
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
 	if msg ~= "lunar:Destroy()" then return end
@@ -61,7 +63,7 @@ local additionalYield = 7.5
 
 wait(additionalYield)
 
-repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG and LunarHub.Character
+repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG and LunarHub.Character and LunarHub.KeystrokesUI
 
 warn("LunarHub // UI loaded in " .. os.time() - bootTime .. " seconds")
 
@@ -167,8 +169,7 @@ local function getStatus(id)
 end
 
 local function getGameName()
-	local assetInfo = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
-	return assetInfo.Name
+	return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
@@ -316,6 +317,8 @@ lltween3:Play()
 
 openHome()
 
+local notiTable = {}
+
 --[[ Utility Functions ]]--
 
 local function notifyUser(msg, success, notiTime)
@@ -324,11 +327,23 @@ local function notifyUser(msg, success, notiTime)
 
 		local new = template:Clone()
 
+		local notiOpen = Instance.new("BoolValue", new)
+		notiOpen.Name = "NotiOpen"
+		notiOpen.Value = true
+
+		local interact = Instance.new("TextButton", new)
+
 		new.Name = "Notification"
 		new.Parent = NotificationUI
 		new.NotificationText.Text = msg
 		new.NotificationText.TextTransparency = 1
 		new.BackgroundTransparency = 1
+
+		interact.BackgroundTransparency = 1
+		interact.Text = ""
+		interact.TextSize = 1
+		interact.Position = UDim2.new(0,0,0,0)
+		interact.Size = UDim2.new(1,0,1,0)
 
 		if success == nil then
 			new.Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(90, 90, 90)), ColorSequenceKeypoint.new(1, Color3.fromRGB(26, 26, 26))})
@@ -343,6 +358,8 @@ local function notifyUser(msg, success, notiTime)
 		end
 
 		new.Visible = true
+		
+		table.insert(notiTable, new)
 
 		TS:Create(new, SecondaryTweenInfo, {BackgroundTransparency = 0}):Play()
 
@@ -352,8 +369,28 @@ local function notifyUser(msg, success, notiTime)
 
 		local notificationTime = notiTime or 7.5
 
+		interact.MouseButton1Click:Connect(function()
+			if notiOpen.Value == true then
+				if new then
+					notiOpen.Value = false
+
+					task.spawn(function()
+						TS:Create(new, NormalTweenInfo, {BackgroundTransparency = 1}):Play()
+						local notiTween = TS:Create(new.NotificationText, NormalTweenInfo, {TextTransparency = 1})
+						notiTween:Play()
+						notiTween.Completed:Wait()
+
+						new:Destroy()
+					end)
+				end
+			end
+		end)
+
 		wait(notificationTime)
 
+		if notiOpen == false then return end
+
+		notiOpen.Value = false
 		TS:Create(new, NormalTweenInfo, {BackgroundTransparency = 1}):Play()
 		local notiTween = TS:Create(new.NotificationText, NormalTweenInfo, {TextTransparency = 1})
 		notiTween:Play()
@@ -364,6 +401,29 @@ local function notifyUser(msg, success, notiTime)
 
 	wait()
 end
+
+UIS.InputBegan:Connect(function(input)
+	if input.KeyCode ~= Enum.KeyCode.V then return end
+
+	for i, noti in pairs(notiTable) do
+		local notiOpen = noti:FindFirstChild("NotiOpen")
+
+		if notiOpen and notiOpen.Value == true then
+			if noti then
+				notiOpen.Value = false
+
+				task.spawn(function()
+					TS:Create(noti, NormalTweenInfo, {BackgroundTransparency = 1}):Play()
+					local notiTween = TS:Create(noti.NotificationText, NormalTweenInfo, {TextTransparency = 1})
+					notiTween:Play()
+					notiTween.Completed:Wait()
+
+					noti:Destroy()
+				end)
+			end
+		end
+	end
+end)
 
 notifyUser("Welcome to LunarHub " .. LunarHubVersion .. ", " .. game.Players.LocalPlayer.DisplayName .. "!")
 
@@ -473,7 +533,7 @@ local CustomScripts = {}
 
 local function loadConfiguration()
 	notifyUser("Loading settings...", true)
-	for i, file in ipairs(listfiles(ConfigFolderName)) do
+	for i, file in pairs(listfiles(ConfigFolderName)) do
 		local configFile = game:GetService("HttpService"):JSONDecode(readfile(file))
 
 		LunarHubSettings = {
@@ -516,7 +576,7 @@ end
 
 local function loadcustomscripts()
 	notifyUser("Loading custom scripts...", true)
-	for i, file in ipairs(listfiles(CustomFolderName)) do
+	for i, file in pairs(listfiles(CustomFolderName)) do
 		local customScript = game:GetService("HttpService"):JSONDecode(readfile(file))
 		local customTable = {
 			Name = customScript.Name,
@@ -528,6 +588,16 @@ local function loadcustomscripts()
 		table.insert(CustomScripts,customTable)
 	end
 	notifyUser("Successfully loaded your custom scripts!", true)
+end
+
+local function savecustomscripts()
+	if checkFunctions() == false then notifyUser("Failed to save custom scripts // Your executor does not support file saving!", false) return end
+
+	for i, customScr in pairs(CustomScripts) do
+		local newFile = writefile(CustomFolderName .. "/" .. customScr.Name)
+	end
+
+	notifyUser("Successfully saved custom scripts!", true)
 end
 
 if checkFunctions() == true then
@@ -1134,7 +1204,6 @@ local function refreshScriptLibrary()
 
 		local scriptTags = new.Tags
 
-
 		scriptTags.CanvasPosition = Vector2.new(686, 0) --technically makes them visible
 
 		for i, already in pairs(scriptTags:GetChildren()) do
@@ -1389,36 +1458,46 @@ local function searchCustomScripts()
 end
 
 local function makecustomscript(name, desc, games, loadstr)
-	if checkFunctions() == false then
-		notifyUser("Failed to make custom script - Your executor does not support file saving!", false)
-		return
-	end
+	task.spawn(function()
+		if checkFunctions() == false then
+			notifyUser("Failed to make custom script - Your executor does not support file saving!", false)
+			return
+		end
 
-	local gamesTable = "UNIVERSAL"
+		local gamesTable = "UNIVERSAL"
 
-	if games ~= "UNIVERSAL" then
-		games = string.gsub(games, " ", "")
+		if games ~= "UNIVERSAL" then
+			games = string.gsub(games, " ", "")
 
-		gamesTable = string.split(games, ",")
-	else
-		gamesTable = "UNIVERSAL"
-	end
+			gamesTable = string.split(games, ",")
+		else
+			gamesTable = "UNIVERSAL"
+		end
 
-	local newTable = {
-		Name = name,
-		Description = desc,
-		Games = gamesTable,
-		LoadstringScript = loadstr
-	}
+		local newTable = {
+			Name = name,
+			Description = desc,
+			Games = gamesTable,
+			LoadstringScript = loadstr
+		}
 
-	local httpService = game:GetService("HttpService")
-	local _tJSON = httpService:JSONEncode(newTable)
+		local httpService = game:GetService("HttpService")
+		local _tJSON = httpService:JSONEncode(newTable)
 
-	local newScript = writefile(CustomFolderName .. "/" .. name .. ".lua", _tJSON)
-	notifyUser("Successfully created custom script: " .. name .. "!", true)
+		local newScript = writefile(CustomFolderName .. "/" .. name .. ".lua", _tJSON)
+		table.insert(CustomScripts, newTable)
 
-	refreshCustomLibrary()
+		notifyUser("Successfully created custom script: " .. name .. "!", true)
+
+		savecustomscripts()
+
+		wait(0.1)
+
+		refreshCustomLibrary()
+	end)
 end
+
+refreshCustomLibrary()
 
 LunarHub.ScriptSearch.SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 	searchScripts()
@@ -1586,6 +1665,7 @@ local homeKey = string.sub(tostring(LunarHubSettings.HomeKeybind), 14)
 LunarHub.Taskbar.FirstTime.Visible = true
 HomeUI.FirstTime.Visible = true
 LunarHub.Taskbar.FirstTime.Text = "TAP '" .. taskKey .. "' TO OPEN/CLOSE"
+LunarHub.Taskbar.FirstTime.TextColor3 = Color3.fromRGB(200,200,200)
 HomeUI.FirstTime.Text = "TAP '" .. homeKey .. "' TO OPEN/CLOSE"
 
 local function openTaskbar()
@@ -1631,6 +1711,8 @@ local customScriptCooldown = false
 LunarHub.CustomScriptCreator.CreateScript.Interact.MouseButton1Click:Connect(function()
 	if customScriptCooldown == true then notifyUser("Please wait a few more seconds before creating another custom script!", false) return end
 
+	customScriptCooldown = true
+
 	local ui = LunarHub.CustomScriptCreator
 
 	if ui.NameInput.Text == "" then
@@ -1657,6 +1739,10 @@ LunarHub.CustomScriptCreator.CreateScript.Interact.MouseButton1Click:Connect(fun
 	end
 
 	makecustomscript(ui.NameInput.Text, ui.DescInput.Text, gms, ui.LoadstringInput.Text)
+
+	wait(15)
+
+	customScriptCooldown = false
 end)
 
 LunarHub.CustomScriptCreator.Cancel.Interact.MouseButton1Click:Connect(function()
@@ -1839,7 +1925,8 @@ local function addGameToList(gm)
 	local new = template:Clone()
 
 	new.Parent = quickPlayUI:WaitForChild("List")
-	new.GameName.Text = gm.Name
+	new.GameName.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Name
+	new.GameName.TextTruncate = Enum.TextTruncate.AtEnd
 	new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 	new.Visible = true
 	new:WaitForChild("Interact").ZIndex = 2
@@ -1851,13 +1938,15 @@ local function addGameToList(gm)
 
 		ui.Close.ZIndex = 99999
 		ui.CanvasPosition = Vector2.new(0,0,0,0)
-		ui.GameName.Text = gm.Name
+		ui.GameName.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Name
+		ui.GameName.TextTruncate = Enum.TextTruncate.AtEnd
 		ui.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 		ui.GameCreator.Text = "Created by " .. gm.GameCreator
-		ui.GameDesc.RichText = true
 		ui.GameDesc.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Description
 
 		TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
+
+		ui.PlayButton.Position = UDim2.new(0.75,0,ui.PlayButton.Position.Y.Scale,ui.PlayButton.Position.Y.Offset)
 
 		ui.PlayButton.MouseButton1Click:Connect(function()
 			notifyUser("Attempting to join " .. gm.Name .. "...", true)
@@ -2125,19 +2214,19 @@ local function closeIdle()
 
 		ui.Title.Text = "Welcome back, " .. game.Players.LocalPlayer.DisplayName .. "!"
 		ui.Subtitle.Text = "We kept you from getting disconnected."
-		
+
 		wait(1.5)
 
 		TS:Create(LunarHub:WaitForChild("DarkBG"), SecondaryTweenInfo, {BackgroundTransparency = 1}):Play()
 		TS:Create(ui.Title, SecondaryTweenInfo, {TextTransparency = 1}):Play()
 		local lastTween = TS:Create(ui.Subtitle, SecondaryTweenInfo, {TextTransparency = 1})
 		lastTween:Play()
-	
+
 		outDeBlur()
 		openTaskbar()
-	
+
 		lastTween.Completed:Wait()
-	
+
 		ui.Visible = false
 	end)
 end
@@ -2314,7 +2403,6 @@ end)
 
 charinter:WaitForChild("FlightSlider").Visible = false
 charinter:WaitForChild("FOVSlider").Position = charinter:WaitForChild("FlightSlider").Position
-charinter:WaitForChild("FOVSlider"):WaitForChild("Progress").BackgroundColor3 = Color3.fromRGB(255,0,0)
 charinter:WaitForChild("FOVSlider"):WaitForChild("UIStroke").Color = Color3.fromRGB(255,0,0)
 
 local clipped = true
@@ -2457,7 +2545,7 @@ local function newESP(plr)
 		newHighlight.Name = "LunarHubESPHighlight"
 		newHighlight.OutlineColor = Color3.fromRGB(0,0,0)
 		newHighlight.OutlineTransparency = 0
-		
+
 		return newHighlight
 	else
 		newHighlight:Destroy()
@@ -2469,17 +2557,17 @@ local function enableESP()
 	for i, plr in pairs(game.Players:GetPlayers()) do
 		newESP(plr)
 	end
-	
+
 	addedconnection = game.Players.PlayerAdded:Connect(function(plr)
 		wait(2)
-		
+
 		newESP(plr)
 	end)
-	
+
 	espEnabled = true
-	
+
 	notifyUser("Successfully enabled ESP!", true)
-	
+
 	--no need for a connection when they leave as when they leave their character automatically removes the ESP highlight!
 end
 
@@ -2489,13 +2577,13 @@ local function disableESP()
 			plr.Character.LunarHubESPHighlight:Destroy()
 		end
 	end
-	
+
 	if addedconnection then
 		addedconnection:Disconnect()
 	end
-	
+
 	espEnabled = false
-	
+
 	notifyUser("Successfully disabled ESP!", true)
 end
 
@@ -2594,15 +2682,103 @@ end)
 
 listone:WaitForChild("ESP"):WaitForChild("Interact").MouseButton1Click:Connect(function()
 	toggleESP()
-	
+
 	wait()
-	
+
 	if espEnabled == false then
 		TS:Create(listone.ESP, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(100,100,100)}):Play()
 		TS:Create(listone.ESP.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(100,100,100)}):Play()
 	else
 		TS:Create(listone.ESP, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 0, 255)}):Play()
 		TS:Create(listone.ESP.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(0, 0, 255)}):Play()
+	end
+end)
+
+--[[ Keystrokes UI ]]--
+
+local keystrokes = LunarHub:WaitForChild("KeystrokesUI")
+
+keystrokes.ZIndex = 1
+
+--toggling
+
+UIS.InputBegan:Connect(function(input, gp)
+	if gp then return end
+	
+	if UIS:IsKeyDown(Enum.KeyCode.LeftControl) and input.KeyCode == Enum.KeyCode.K then
+		keystrokes.Visible = not keystrokes.Visible
+	end
+end)
+
+local function onKey(tl)
+	if tl then
+		TS:Create(tl, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(170, 221, 255)}):Play()
+	end
+end
+
+local function offKey(tl)
+	if tl then
+		TS:Create(tl, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 0, 0)}):Play()
+	end
+end
+
+UIS.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.W then
+		onKey(keystrokes:WaitForChild("WKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.A then
+		onKey(keystrokes:WaitForChild("AKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.S then
+		onKey(keystrokes:WaitForChild("SKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.D then
+		onKey(keystrokes:WaitForChild("DKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.Space then
+		onKey(keystrokes:WaitForChild("Spacebar"))
+	end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		onKey(keystrokes:WaitForChild("LMB"))
+	end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		onKey(keystrokes:WaitForChild("RMB"))
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.W then
+		offKey(keystrokes:WaitForChild("WKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.A then
+		offKey(keystrokes:WaitForChild("AKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.S then
+		offKey(keystrokes:WaitForChild("SKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.D then
+		offKey(keystrokes:WaitForChild("DKey"))
+	end
+
+	if input.KeyCode == Enum.KeyCode.Space then
+		offKey(keystrokes:WaitForChild("Spacebar"))
+	end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		offKey(keystrokes:WaitForChild("LMB"))
+	end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		offKey(keystrokes:WaitForChild("RMB"))
 	end
 end)
 
