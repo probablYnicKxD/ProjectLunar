@@ -20,6 +20,44 @@ warn("LunarHub // LunarHub is starting!")
 
 local LunarHubVersion = "v0.0.2 Alpha"
 
+local LunarHubUI_URL = "https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarHub%20Interface%20-%20v0.0.2%20Alpha.rbxm?raw=true"
+
+local UserExecutor = identifyexecutor() or "Unknown"
+
+if not isfile and delfile and writefile and readfile and listfiles and makefolder and isfolder and setclipboard and (getsynasset or getcustomasset) then
+	warn("LunarHub // " .. UserExecutor .. " is not supported! Please get another executor, or use the recommended executor, Comet 3.")
+	
+	local new = Instance.new("Message", game.Workspace)
+	new.Text = "LunarHub // " .. UserExecutor .. " is not supported. Please get another executor, or use the recommended executor, Comet 3."
+	
+	wait(5)
+	
+	new:Destroy()
+	
+	return
+end
+
+--credits to RegularVynixiu for this asset loading stuff lol
+
+local GetAsset = getsynasset or getcustomasset
+
+local function LoadCustomInstance(url)
+    if url == "" then
+        return ""
+    elseif string.find(url, "rbxassetid://") or string.find(url, "roblox.com") or tonumber(url) then
+        local numberId = string.gsub(url, "%D", "")
+        return game:GetObjects("rbxassetid://".. numberId)[1]
+    else
+        local fileName = "customInstance_".. tick().. ".txt"
+        local instance = nil
+        writefile(fileName, game:HttpGet(url))
+        instance = game:GetObjects(GetAsset(fileName))[1]
+        delfile(fileName)
+
+        return instance
+    end
+end
+
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
 	if msg ~= "lunar:Destroy()" then return end
 
@@ -52,7 +90,7 @@ end
 
 warn("LunarHub // Loading UI...")
 
-local LunarHub = game:GetObjects("rbxassetid://11520374479")[1]
+local LunarHub = LoadCustomInstance(LunarHubUI_URL)
 
 --[[ yielding so that no errors mid-script, this will change if i find a different way to do this ]]--
 
@@ -477,8 +515,6 @@ local function getlunarusers()
 end
 
 --[[ Executor Detection ]]--
-
-local UserExecutor = identifyexecutor() or "Unknown"
 
 if syn then
 	UserExecutor = "Synapse X"
@@ -2832,6 +2868,16 @@ LunarHub:WaitForChild("Home"):WaitForChild("Shutdown"):WaitForChild("Interact").
 	LunarHub:Destroy()
 
 	return
+end)
+
+game.Players.PlayerRemoving:Connect(function(plr)
+    if plr == game.Players.LocalPlayer then
+        for _, v in next, listfiles("") do
+            if string.find(v, "customInstance") then
+                delfile(v)
+            end
+        end
+    end
 end)
 
 print("LunarHub // Loaded LunarHub " .. LunarHubVersion .. " in " .. os.time() - bootTime .. " seconds")
