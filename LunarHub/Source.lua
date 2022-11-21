@@ -397,7 +397,7 @@ local function notifyUser(msg, success, notiTime)
 		interact.Size = UDim2.new(1,0,1,0)
 
 		if success == nil then
-			new.Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(90, 90, 90)), ColorSequenceKeypoint.new(1, Color3.fromRGB(26, 26, 26))})
+			new.Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(170, 221, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(76, 117, 145))})
 		end
 
 		if success == true then
