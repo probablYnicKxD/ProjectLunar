@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.2 Alpha
+  	LunarHub - Version 0.0.3 Alpha
   	
   	open-source because i really don't care if you copy SOME parts of the script, just not all of it.
   	
@@ -18,44 +18,57 @@ local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
 
-local LunarHubVersion = "v0.0.2 Alpha"
+local LunarHubVersion = "v0.0.3 Alpha"
 
-local LunarHubUI_URL = "https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarHub%20Interface%20-%20v0.0.2%20Alpha.rbxm?raw=true"
+local LunarHubUI_URL = "https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarHub%20Interface%20-%20" .. LunarHubVersion .. ".rbxm?raw=true"
 
 local UserExecutor = identifyexecutor() or "Unknown"
 
-if not isfile and delfile and writefile and readfile and listfiles and makefolder and isfolder and setclipboard and (getsynasset or getcustomasset) then
+local GetAsset = getsynasset or getcustomasset
+
+if not isfile and delfile and writefile and readfile and listfiles and makefolder and isfolder and setclipboard and GetAsset then
 	warn("LunarHub // " .. UserExecutor .. " is not supported! Please get another executor, or use the recommended executor, Comet 3.")
-	
+
 	local new = Instance.new("Message", game.Workspace)
 	new.Text = "LunarHub // " .. UserExecutor .. " is not supported. Please get another executor, or use the recommended executor, Comet 3."
-	
+
 	wait(5)
-	
+
 	new:Destroy()
-	
+
+	return
+end
+
+if not GetAsset then
+	warn("LunarHub // " .. UserExecutor .. " is not supported! Please get another executor, or use the recommended executor, Comet 3.")
+
+	local new = Instance.new("Message", game.Workspace)
+	new.Text = "LunarHub // " .. UserExecutor .. " is not supported. Please get another executor, or use the recommended executor, Comet 3."
+
+	wait(5)
+
+	new:Destroy()
+
 	return
 end
 
 --credits to RegularVynixiu for this asset loading stuff lol
 
-local GetAsset = getsynasset or getcustomasset
-
 local function LoadCustomInstance(url)
-    if url == "" then
-        return ""
-    elseif string.find(url, "rbxassetid://") or string.find(url, "roblox.com") or tonumber(url) then
-        local numberId = string.gsub(url, "%D", "")
-        return game:GetObjects("rbxassetid://".. numberId)[1]
-    else
-        local fileName = "customInstance_".. tick().. ".txt"
-        local instance = nil
-        writefile(fileName, game:HttpGet(url))
-        instance = game:GetObjects(GetAsset(fileName))[1]
-        delfile(fileName)
+	if url == "" then
+		return ""
+	elseif string.find(url, "rbxassetid://") or string.find(url, "roblox.com") or tonumber(url) then
+		local numberId = string.gsub(url, "%D", "")
+		return game:GetObjects("rbxassetid://".. numberId)[1]
+	else
+		local fileName = "customInstance_".. tick().. ".txt"
+		local instance = nil
+		writefile(fileName, game:HttpGet(url))
+		instance = game:GetObjects(GetAsset(fileName))[1]
+		delfile(fileName)
 
-        return instance
-    end
+		return instance
+	end
 end
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
@@ -396,7 +409,7 @@ local function notifyUser(msg, success, notiTime)
 		end
 
 		new.Visible = true
-		
+
 		table.insert(notiTable, new)
 
 		TS:Create(new, SecondaryTweenInfo, {BackgroundTransparency = 0}):Play()
@@ -1447,6 +1460,29 @@ end)
 
 --[[ Searching ]]--
 
+local function searchPlayerlist()
+	local valid = {}
+
+	for i, scr in pairs(LunarHub.Playerlist.Interactions.List:GetChildren()) do
+		if scr.Name ~= "UIListLayout" and scr.Name ~= "Placeholder" and scr.Name ~= "Template" then
+			if string.find(string.lower(scr.DisplayName.Text), string.lower(LunarHub.Playerlist.Interactions.SearchFrame.SearchBox.Text)) then
+				scr.Visible = true
+				table.insert(valid, scr)
+			else
+				scr.Visible = false
+			end
+		end
+	end
+
+	if #valid == 0 then
+		LunarHub.Playerlist.NoPlayers.Visible = true
+		LunarHub.Playerlist.NoPlayersDesc.Visible = true
+	else
+		LunarHub.Playerlist.NoPlayers.Visible = false
+		LunarHub.Playerlist.NoPlayersDesc.Visible = false
+	end
+end
+
 local function searchScripts()
 	local valid = {}
 
@@ -1541,6 +1577,10 @@ end)
 
 LunarHub.CustomScripts.SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 	searchCustomScripts()
+end)
+
+LunarHub.Playerlist.Interactions.SearchFrame.SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	searchPlayerlist()
 end)
 
 local alreadyconnected = false
@@ -2740,7 +2780,7 @@ keystrokes.ZIndex = 1
 
 UIS.InputBegan:Connect(function(input, gp)
 	if gp then return end
-	
+
 	if UIS:IsKeyDown(Enum.KeyCode.LeftControl) and input.KeyCode == Enum.KeyCode.K then
 		keystrokes.Visible = not keystrokes.Visible
 	end
@@ -2870,14 +2910,127 @@ LunarHub:WaitForChild("Home"):WaitForChild("Shutdown"):WaitForChild("Interact").
 	return
 end)
 
+--[[ executor system ]]--
+
+local exec = LunarHub:WaitForChild("Executor")
+local luainput = exec:WaitForChild("LineScroll"):WaitForChild("LuaInput")
+
+exec:WaitForChild("Execute").MouseButton1Click:Connect(function()
+	local success, err = pcall(function()
+		loadstring(luainput.Text)()
+	end)
+
+	if success then
+		notifyUser("Successfully executed script from LunarExecutor!", true)
+	elseif not success and err then
+		notifyUser("Failed to execute script from LunarExecutor - Error message shown in Dev Console [F9]!", false)
+		warn("LunarHub // LunarExecutor // Failed to execute script - Error Message:\n" .. err)
+	end
+end)
+
+UIS.InputBegan:Connect(function(input)
+	if (input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.KeypadEnter) and luainput:IsFocused() == true then
+		luainput.Parent.CanvasSize = UDim2.new(luainput.Parent.CanvasSize.X.Scale, luainput.Parent.CanvasSize.X.Offset, luainput.Parent.CanvasSize.Y.Scale, luainput.Parent.CanvasSize.Y.Offset + luainput.TextBounds.Y)
+	end
+end)
+
+exec:WaitForChild("Clear").MouseButton1Click:Connect(function()
+	luainput.Text = ""
+	luainput.Parent.CanvasSize = UDim2.new(0,0,0,0)
+end)
+
+exec:WaitForChild("Close").MouseButton1Click:Connect(function()
+	exec.Visible = false
+end)
+
+TaskbarUI:WaitForChild("Buttons"):WaitForChild("Executor"):WaitForChild("Interact").MouseButton1Click:Connect(function()
+	exec.Position = UDim2.new(0.5,0,0.5,0)
+	exec.Visible = not exec.Visible
+end)
+
+--[[ Dragging ]]--
+
+--LunarExecutor
+
+task.spawn(function()
+	local dragToggle = nil
+	local dragSpeed = 0.1
+	local dragStart = nil
+	local startPos = nil
+
+	local function updateInput(input)
+		local delta = input.Position - dragStart
+		local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		exec:TweenPosition(position,"Out","Quad",dragSpeed, true)
+	end
+
+	exec.InputBegan:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+			dragToggle = true
+			dragStart = input.Position
+			startPos = exec.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragToggle = false
+				end
+			end)
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if dragToggle then
+				updateInput(input)
+			end
+		end
+	end)
+end)
+
+--Keystrokes
+
+task.spawn(function()
+	local dragToggle = nil
+	local dragSpeed = 0.1
+	local dragStart = nil
+	local startPos = nil
+
+	local function updateInput(input)
+		local delta = input.Position - dragStart
+		local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		keystrokes:TweenPosition(position,"Out","Quad",dragSpeed, true)
+	end
+
+	keystrokes.InputBegan:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+			dragToggle = true
+			dragStart = input.Position
+			startPos = keystrokes.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragToggle = false
+				end
+			end)
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if dragToggle then
+				updateInput(input)
+			end
+		end
+	end)
+end)
+
 game.Players.PlayerRemoving:Connect(function(plr)
-    if plr == game.Players.LocalPlayer then
-        for _, v in next, listfiles("") do
-            if string.find(v, "customInstance") then
-                delfile(v)
-            end
-        end
-    end
+	if plr == game.Players.LocalPlayer then
+		for _, v in next, listfiles("") do
+			if string.find(v, "customInstance") then
+				delfile(v)
+			end
+		end
+	end
 end)
 
 print("LunarHub // Loaded LunarHub " .. LunarHubVersion .. " in " .. os.time() - bootTime .. " seconds")
