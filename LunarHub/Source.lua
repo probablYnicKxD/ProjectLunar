@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.3 Alpha
+  	LunarHub - Version 0.0.4 Alpha
   	
   	open-source because i really don't care if you copy SOME parts of the script, just not all of it.
   	
@@ -18,28 +18,15 @@ local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
 
-local LunarHubVersion = "v0.0.3 Alpha"
+local CurrentGameInfoData = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+
+local LunarHubVersion = "v0.0.4 Alpha"
 
 local LunarHubUI_URL = "https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarHub%20Interface%20-%20" .. LunarHubVersion .. ".rbxm?raw=true"
 
 local UserExecutor = identifyexecutor() or "Unknown"
 
-local GetAsset = getsynasset or getcustomasset
-
-if not isfile and delfile and writefile and readfile and listfiles and makefolder and isfolder and setclipboard and GetAsset then
-	warn("LunarHub // " .. UserExecutor .. " is not supported! Please get another executor, or use the recommended executor, Comet 3.")
-
-	local new = Instance.new("Message", game.Workspace)
-	new.Text = "LunarHub // " .. UserExecutor .. " is not supported. Please get another executor, or use the recommended executor, Comet 3."
-
-	wait(5)
-
-	new:Destroy()
-
-	return
-end
-
-if not GetAsset then
+if not isfile and delfile and writefile and readfile and listfiles and makefolder and isfolder and setclipboard and (getsynasset or getcustomasset) then
 	warn("LunarHub // " .. UserExecutor .. " is not supported! Please get another executor, or use the recommended executor, Comet 3.")
 
 	local new = Instance.new("Message", game.Workspace)
@@ -53,6 +40,8 @@ if not GetAsset then
 end
 
 --credits to RegularVynixiu for this asset loading stuff lol
+
+local GetAsset = getsynasset or getcustomasset
 
 local function LoadCustomInstance(url)
 	if url == "" then
@@ -132,7 +121,6 @@ end
 local OriginalCharacterProperties = {
 	WalkSpeed = LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed,
 	JumpPower = LocalPlayer.Character:WaitForChild("Humanoid").JumpPower,
-	FlightSpeed = 1,
 	FieldOfView = game.Workspace.CurrentCamera.FieldOfView or game.Workspace.Camera.FieldOfView or game.Workspace:FindFirstChildWhichIsA("Camera").FieldOfView
 }
 
@@ -190,7 +178,19 @@ local LunarHubSettings = {
 }
 
 local LunarHubThemes = {
-	DARK = {},
+	DARK = {
+		Home = Color3.fromRGB(0, 0, 0),
+		GameDetection = Color3.fromRGB(15, 15, 15),
+		ScriptSearch = Color3.fromRGB(20, 20, 20),
+		Taskbar = Color3.fromRGB(255, 255, 255),
+		Settings = Color3.fromRGB(25, 25, 25),
+		Scripts = Color3.fromRGB(255, 255, 255),
+		Theme = Color3.fromRGB(255, 255, 255),
+		ThemeImport = Color3.fromRGB(255, 255, 255),
+		Notifications = Color3.fromRGB(255, 255, 255),
+		ServerList = Color3.fromRGB(20, 20, 20),
+		LunarLogo = Color3.fromRGB(255, 255, 255),
+	},
 	LIGHT = {},
 	WAVE = {},
 	LUNAR = {},
@@ -220,7 +220,7 @@ local function getStatus(id)
 end
 
 local function getGameName()
-	return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+	return CurrentGameInfoData.Name
 end
 
 game.Players.LocalPlayer.OsPlatform = "LunarHub"
@@ -397,7 +397,7 @@ local function notifyUser(msg, success, notiTime)
 		interact.Size = UDim2.new(1,0,1,0)
 
 		if success == nil then
-			new.Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(170, 221, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(76, 117, 145))})
+			new.Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(170, 221, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 160, 180))})
 		end
 
 		if success == true then
@@ -580,10 +580,12 @@ local ConfigFolder = isfolder(ConfigFolderName)
 
 local CustomScripts = {}
 
+local https = game:GetService("HttpService")
+
 local function loadConfiguration()
 	notifyUser("Loading settings...", true)
 	for i, file in pairs(listfiles(ConfigFolderName)) do
-		local configFile = game:GetService("HttpService"):JSONDecode(readfile(file))
+		local configFile = https:JSONDecode(readfile(file))
 
 		LunarHubSettings = {
 			Theme = configFile.Theme,
@@ -623,27 +625,33 @@ local function loadConfiguration()
 	notifyUser("Successfully loaded settings!", true)
 end
 
-local function loadcustomscripts()
-	notifyUser("Loading custom scripts...", true)
+local function loadcustomscripts(nonoti)
+	if not nonoti then
+		notifyUser("Loading custom scripts...", true)
+	end
+	CustomScripts = {}
 	for i, file in pairs(listfiles(CustomFolderName)) do
-		local customScript = game:GetService("HttpService"):JSONDecode(readfile(file))
+		local customScript = https:JSONDecode(readfile(file))
 		local customTable = {
 			Name = customScript.Name,
 			Description =  customScript.Description,
 			Games = customScript.Games,
 			LoadstringScript = customScript.LoadstringScript,
 		}
-		CustomScripts = {}
 		table.insert(CustomScripts,customTable)
 	end
-	notifyUser("Successfully loaded your custom scripts!", true)
+	if not nonoti then
+		notifyUser("Successfully loaded your custom scripts!", true)
+	end
 end
 
 local function savecustomscripts()
 	if checkFunctions() == false then notifyUser("Failed to save custom scripts // Your executor does not support file saving!", false) return end
 
 	for i, customScr in pairs(CustomScripts) do
-		local newFile = writefile(CustomFolderName .. "/" .. customScr.Name)
+		customScr = https:JSONEncode(customScr)
+
+		local newFile = writefile(CustomFolderName .. "/" .. customScr.Name .. ".txt", customScr)
 	end
 
 	notifyUser("Successfully saved custom scripts!", true)
@@ -680,10 +688,21 @@ end
 local function writesettings(newSettings)
 	if not checkFunctions() then return end
 
-	local tJSON = game:GetService("HttpService"):JSONEncode(newSettings)
+	newSettings = https:JSONEncode(newSettings)
+
 	local success, errMsg = pcall(function()
-		writefile(ConfigFolderName .. "/" .. ConfigFileName, tJSON)
+		writefile(ConfigFolderName .. "/" .. ConfigFileName .. ".txt", newSettings)
 	end)
+	
+	LunarHub.Taskbar.FirstTime.Visible = true
+	HomeUI.FirstTime.Visible = true
+	LunarHub.Taskbar.FirstTime.Text = "TAP '" .. string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14) .. "' TO OPEN/CLOSE"
+	LunarHub.Taskbar.FirstTime.TextColor3 = Color3.fromRGB(200,200,200)
+	HomeUI.FirstTime.Text = "TAP '" .. string.sub(tostring(LunarHubSettings.HomeKeybind), 14) .. "' TO OPEN/CLOSE"
+	HomeUI.FirstTime.TextColor3 = Color3.fromRGB(225,225,225)
+	HomeUI.FirstTime.AnchorPoint = Vector2.new(0.5,0)
+	HomeUI.FirstTime.Position = UDim2.new(0.5,0,HomeUI.FirstTime.Position.Y.Scale, HomeUI.FirstTime.Position.Y.Offset)
+	HomeUI.FirstTime.TextXAlignment = Enum.TextXAlignment.Center
 
 	if success then
 		notifyUser("Successfully saved settings!", true)
@@ -692,21 +711,20 @@ local function writesettings(newSettings)
 	end
 end
 
-local function createTheme(name, main, accent, secondary)
+local function createTheme(name, main, accent, secondary, text)
 	if checkFunctions() == false then return end
 
 	local success,errMsg = pcall(function()
 		LunarHubThemes[name] = {
 			Main = main,
 			Accent = accent,
-			Secondary = secondary
+			Secondary = secondary,
+			Text = text
 		}
-
-		writefile()
 	end)
 
 	if success then
-
+		notifyUser("Successfully created theme " .. name .. "!", true)
 	elseif not success and errMsg then
 		notifyUser("Failed to create theme - Error message shown in Developer Console! [F9]", false)
 		warn("LunarHub // Failed to create theme - Error Message:\n" .. errMsg)
@@ -1325,6 +1343,8 @@ local function refreshScriptLibrary()
 end
 
 local function refreshCustomLibrary()
+	loadcustomscripts(true)
+
 	if #CustomScripts == 0 then
 		LunarHub.CustomScripts.NoCustomScripts.Visible = true
 		LunarHub.CustomScripts.NoCustomScriptsDesc.Visible = true
@@ -1353,6 +1373,18 @@ local function refreshCustomLibrary()
 		if customScr.Games == "UNIVERSAL" then
 			new.Universal.Visible = true
 		end
+		
+		new.Execute.UIStroke.Color = Color3.fromRGB(0,255,0)
+		new.Execute.BackgroundColor3 = Color3.fromRGB(0,125,0)
+		
+		--[[
+		
+		local newstroke = Instance.new("UIStroke")
+		newstroke.Parent = new.Execute
+		newstroke.Color = Color3.fromRGB(0,0,0)
+		newstroke.Thickness = 1
+		
+		]]--
 
 		new.Execute.MouseButton1Click:Connect(function()
 			local success,errMsg = pcall(function()
@@ -1531,39 +1563,30 @@ end
 
 local function makecustomscript(name, desc, games, loadstr)
 	task.spawn(function()
-		if checkFunctions() == false then
-			notifyUser("Failed to make custom script - Your executor does not support file saving!", false)
-			return
-		end
-
-		local gamesTable = "UNIVERSAL"
-
+		games = string.gsub(games, " ", "")
+	
 		if games ~= "UNIVERSAL" then
-			games = string.gsub(games, " ", "")
-
-			gamesTable = string.split(games, ",")
-		else
-			gamesTable = "UNIVERSAL"
+			games = string.split(games, ",")
 		end
-
+		
 		local newTable = {
 			Name = name,
 			Description = desc,
-			Games = gamesTable,
-			LoadstringScript = loadstr
+			Games = games,
+			LoadstringScript = loadstr,
 		}
 
 		local httpService = game:GetService("HttpService")
 		local _tJSON = httpService:JSONEncode(newTable)
 
-		local newScript = writefile(CustomFolderName .. "/" .. name .. ".lua", _tJSON)
+		local newScript = writefile(CustomFolderName .. "/" .. name .. ".txt", _tJSON)
 		table.insert(CustomScripts, newTable)
 
 		notifyUser("Successfully created custom script: " .. name .. "!", true)
 
 		savecustomscripts()
 
-		wait(0.1)
+		wait(1)
 
 		refreshCustomLibrary()
 	end)
@@ -1735,15 +1758,6 @@ LunarHub.Taskbar.Buttons.Playerlist.Interact.MouseButton1Click:Connect(function(
 	end
 end)
 
-local taskKey = string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14)
-local homeKey = string.sub(tostring(LunarHubSettings.HomeKeybind), 14)
-
-LunarHub.Taskbar.FirstTime.Visible = true
-HomeUI.FirstTime.Visible = true
-LunarHub.Taskbar.FirstTime.Text = "TAP '" .. taskKey .. "' TO OPEN/CLOSE"
-LunarHub.Taskbar.FirstTime.TextColor3 = Color3.fromRGB(200,200,200)
-HomeUI.FirstTime.Text = "TAP '" .. homeKey .. "' TO OPEN/CLOSE"
-
 local function openTaskbar()
 	local taskbar = LunarHub.Taskbar
 
@@ -1782,13 +1796,7 @@ UIS.InputBegan:Connect(function(input, gp)
 	end
 end)
 
-local customScriptCooldown = false
-
 LunarHub.CustomScriptCreator.CreateScript.Interact.MouseButton1Click:Connect(function()
-	if customScriptCooldown == true then notifyUser("Please wait a few more seconds before creating another custom script!", false) return end
-
-	customScriptCooldown = true
-
 	local ui = LunarHub.CustomScriptCreator
 
 	if ui.NameInput.Text == "" then
@@ -1815,10 +1823,6 @@ LunarHub.CustomScriptCreator.CreateScript.Interact.MouseButton1Click:Connect(fun
 	end
 
 	makecustomscript(ui.NameInput.Text, ui.DescInput.Text, gms, ui.LoadstringInput.Text)
-
-	wait(15)
-
-	customScriptCooldown = false
 end)
 
 LunarHub.CustomScriptCreator.Cancel.Interact.MouseButton1Click:Connect(function()
@@ -1849,14 +1853,6 @@ end)
 if _G.OverrideSettings then
 	LunarHubSettings = _G.OverrideSettings
 end
-
-TaskbarUI.Buttons.Settings.Interact.MouseButton1Click:Connect(function()
-	TS:Create(SettingsUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
-
-	SettingsUI.Close.MouseButton1Click:Connect(function()
-		TS:Create(SettingsUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1.5,0)}):Play()
-	end)
-end)
 
 local function getToggleValue(toggle)
 	local icon = toggle:FindFirstChild("Icon")
@@ -1917,8 +1913,8 @@ local function getSettings()
 		newSettings.TimeFormat = 12
 	end
 
-	newSettings.TaskbarKeybind = Enum.KeyCode[sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text]
-	newSettings.HomeKeybind = Enum.KeyCode[sui.HomeKeybind.KeybindFrame.CurrentBind.Text]
+	newSettings.TaskbarKeybind = LunarHubSettings.TaskbarKeybind
+	newSettings.HomeKeybind = LunarHubSettings.HomeKeybind
 
 	newSettings.Theme = ThemeUI.SelectedTheme.Value
 
@@ -1926,27 +1922,27 @@ local function getSettings()
 end
 
 sui.SecondsToggle.Interact.MouseButton1Click:Connect(function()
-	local newVal = toggleToggle()
+	local newVal = toggleToggle(sui.SecondsToggle)
 
 	LunarHubSettings.ShowSeconds = newVal
-	writesettings(getSettings())
 end)
 
 sui.TimeToggle.Interact.MouseButton1Click:Connect(function()
-	local newVal = toggleToggle()
+	local newVal = toggleToggle(sui.TimeToggle)
 
 	if newVal == true then
 		LunarHubSettings.TimeFormat = 24
 	else
 		LunarHubSettings.TimeFormat = 12
 	end
-
-	writesettings(getSettings())
 end)
 
 sui:WaitForChild("HomeKeybind"):WaitForChild("Interact").MouseButton1Click:Connect(function()
 	sui.HomeKeybind.KeybindFrame.CurrentBind.Text = "Press Key"
 end)
+
+sui.HomeKeybind.KeybindFrame.CurrentBind.Text = string.sub(tostring(LunarHubSettings.HomeKeybind), 14)
+sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text = string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14)
 
 sui:WaitForChild("TaskbarKeybind"):WaitForChild("Interact").MouseButton1Click:Connect(function()
 	sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text = "Press Key"
@@ -1965,8 +1961,6 @@ UIS.InputBegan:Connect(function(input)
 			sui.HomeKeybind.KeybindFrame.CurrentBind.Text = keyStr
 
 			LunarHubSettings.HomeKeybind = input.KeyCode
-
-			writesettings(getSettings())
 		end
 	end
 
@@ -1981,12 +1975,23 @@ UIS.InputBegan:Connect(function(input)
 
 			sui.TaskbarKeybind.KeybindFrame.CurrentBind.Text = keyStr
 
-			LunarHubSettings.TaskbarKeybind = input.KeyCode
+			wait(0.05)
 
-			writesettings(getSettings())
+			LunarHubSettings.TaskbarKeybind = input.KeyCode
 		end
 	end
 end)
+
+TaskbarUI.Buttons.Settings.Interact.MouseButton1Click:Connect(function()
+	TS:Create(SettingsUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
+end)
+
+SettingsUI.Close.MouseButton1Click:Connect(function()
+	TS:Create(SettingsUI, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1.5,0)}):Play()
+	writesettings(getSettings())
+end)
+
+writesettings(getSettings())
 
 --[[ Quick Play ]]--
 
@@ -2000,8 +2005,10 @@ local quickPlayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.
 local function addGameToList(gm)
 	local new = template:Clone()
 
+	local gminfo = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID)
+
 	new.Parent = quickPlayUI:WaitForChild("List")
-	new.GameName.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Name
+	new.GameName.Text = gminfo.Name
 	new.GameName.TextTruncate = Enum.TextTruncate.AtEnd
 	new.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 	new.Visible = true
@@ -2014,11 +2021,11 @@ local function addGameToList(gm)
 
 		ui.Close.ZIndex = 99999
 		ui.CanvasPosition = Vector2.new(0,0,0,0)
-		ui.GameName.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Name
+		ui.GameName.Text = gminfo.Name
 		ui.GameName.TextTruncate = Enum.TextTruncate.AtEnd
 		ui.GameThumbnail.Image = "rbxthumb://type=GameThumbnail&id=" .. gm.GameID .. "&w=768&h=432"
 		ui.GameCreator.Text = "Created by " .. gm.GameCreator
-		ui.GameDesc.Text = game:GetService("MarketplaceService"):GetProductInfo(gm.GameID).Description
+		ui.GameDesc.Text = gminfo.Description
 
 		TS:Create(ui, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,0.5,0)}):Play()
 
@@ -2187,7 +2194,7 @@ joinUI.Create.MouseButton1Click:Connect(function()
 end)
 
 joinUI.Join.MouseButton1Click:Connect(function()
-	notifyUser("Attempting to join server via Lunar Hub Join Code...", true)
+	notifyUser("Attempting to join server via LunarHub Join Code...", true)
 
 	local gameID, serverID = translateJoinCode(joinUI.JoinCodeInput.Text)
 
@@ -2336,6 +2343,142 @@ TaskbarUI:WaitForChild("Buttons"):WaitForChild("Character"):WaitForChild("Intera
 end)
 
 local charinter = charUI:WaitForChild("Interactions")
+
+local function inrange(num, min, max)
+	if num >= min and num <= max then
+		return true
+	else
+		return false
+	end
+end
+
+local function getColorByGood(typeofstat, num)
+	local stat = string.lower(typeofstat)
+
+	if stat == "ping" then
+		if inrange(num, 0, 50) then
+			return Color3.fromRGB(0, 255 ,0)
+		elseif inrange(num, 51, 149) then
+			return Color3.fromRGB(255, 119, 0)
+		elseif inrange(num, 150, 250) then
+			return Color3.fromRGB(255, 0, 0)
+		elseif inrange(num, 251, 499) then
+			return Color3.fromRGB(170, 0, 0)
+		elseif inrange(num, 500, 9e9) then
+			return Color3.fromRGB(85, 0, 0)
+		else
+			return Color3.fromRGB(0, 0, 0)
+		end
+	elseif stat == "fps" then
+		if inrange(num, 0, 10) then
+			return Color3.fromRGB(85, 0, 0)
+		elseif inrange(num, 11, 29) then
+			return Color3.fromRGB(170, 0, 0)
+		elseif inrange(num, 30, 45) then
+			return Color3.fromRGB(255,0,0)
+		elseif inrange(num, 46, 59) then
+			return Color3.fromRGB(255, 199, 0)
+		elseif inrange(num, 60, 100) then
+			return Color3.fromRGB(0, 255, 0)
+		elseif inrange(num, 101, 300) then
+			return Color3.fromRGB(0, 170, 0)
+		elseif inrange(num, 301, 9e9) then
+			return Color3.fromRGB(0, 85, 0)
+		else
+			return Color3.fromRGB(0, 0, 0)
+		end
+	else
+		return Color3.fromRGB(0, 0, 0)
+	end
+end
+
+local function addCharToggle(name : string, oncolor : Color3, func : "function", imageprops : table, listnum : number, default : boolean)
+	local currentval = default
+
+	local new = charinter:WaitForChild("List1"):WaitForChild("Noclip"):Clone()
+	new.Name = name
+
+	if default == true then
+		new.BackgroundColor3 = oncolor
+		new:WaitForChild("UIStroke").Color = oncolor
+	else
+		new.BackgroundColor3 = Color3.fromRGB(50,50,50)
+		new:WaitForChild("UIStroke").Color = Color3.fromRGB(50,50,50)
+	end
+
+	new:WaitForChild("Icon").Image = imageprops.Image
+	new:WaitForChild("Icon").ImageRectOffset = imageprops.ImageRectOffset
+	new:WaitForChild("Icon").ImageRectSize = imageprops.ImageRectSize
+
+	new:WaitForChild("Interact").MouseButton1Click:Connect(function()
+		currentval = not currentval
+
+		if currentval == true then
+			TS:Create(new, SecondaryTweenInfo, {BackgroundColor3 = oncolor}):Play()
+			TS:Create(new.UIStroke, SecondaryTweenInfo, {Color = oncolor}):Play()
+		else
+			TS:Create(new, SecondaryTweenInfo, {BackgroundColor3 = Color3.fromRGB(50,50,50)}):Play()
+			TS:Create(new.UIStroke, SecondaryTweenInfo, {Color = Color3.fromRGB(50,50,50)}):Play()
+		end
+
+		func(currentval)
+	end)
+
+	new.Parent = charinter:WaitForChild("List" .. tostring(listnum))
+end
+
+addCharToggle("FPS", Color3.fromRGB(255, 0, 0), function(val)
+	local LunarHubStats = LunarHub:WaitForChild("Stats")
+
+	LunarHubStats:WaitForChild("FPS").Visible = val
+end, {Image = "rbxassetid://3926305904", ImageRectOffset = Vector2.new(564, 684), ImageRectSize = Vector2.new(36, 36)}, 1, false)
+
+--[[ inf zoom ]]--
+
+local oldmaxzoomdistance = game.Players.LocalPlayer.CameraMaxZoomDistance
+local oldminzoomdistance = game.Players.LocalPlayer.CameraMinZoomDistance
+
+addCharToggle("InfiniteZoom", Color3.fromRGB(0, 255, 255), function(val)
+	local cam = game.Workspace.CurrentCamera or game.Workspace.Camera or game.Workspace:FindFirstChildWhichIsA("Camera")
+
+	if cam then
+		if val == true then
+			game.Players.LocalPlayer.CameraMaxZoomDistance = math.huge
+			game.Players.LocalPlayer.CameraMinZoomDistance = 0
+			notifyUser("Activated infinite camera zoom!", true)
+		else
+			game.Players.LocalPlayer.CameraMaxZoomDistance = oldmaxzoomdistance
+			game.Players.LocalPlayer.CameraMinZoomDistance = oldminzoomdistance
+			notifyUser("Deactivated infinite camera zoom!", true)
+		end
+	end
+end, {Image = "rbxassetid://6764432408", ImageRectOffset = Vector2.new(0, 650), ImageRectSize = Vector2.new(50, 50)}, 1, false)
+
+--[[ ping ]]--
+
+addCharToggle("Ping", Color3.fromRGB(170, 0, 255), function(val)
+	local LunarHubStats = LunarHub:WaitForChild("Stats")
+
+	LunarHubStats:WaitForChild("Ping").Visible = val
+end, {Image = "rbxassetid://3926307971", ImageRectOffset = Vector2.new(4, 284), ImageRectSize = Vector2.new(36, 36)}, 2, false)
+
+task.spawn(function()
+	while wait() do
+		local fps = game.Workspace:GetRealPhysicsFPS()
+
+		LunarHub:WaitForChild("Stats"):WaitForChild("FPS").Text = "FPS: " .. tostring(fps)
+		TS:Create(LunarHub:WaitForChild("Stats"):WaitForChild("FPS"):WaitForChild("Outline"), SecondaryTweenInfo, {Color = getColorByGood("fps", fps)}):Play()
+	end
+end)
+
+task.spawn(function()
+	while wait() do
+		local ping = math.floor(game:GetService("Stats").PerformanceStats.Ping:GetValue() + 0.5)
+
+		LunarHub:WaitForChild("Stats"):WaitForChild("Ping").Text = "PING: " .. tostring(ping) .. " ms"
+		TS:Create(LunarHub:WaitForChild("Stats"):WaitForChild("Ping"):WaitForChild("Outline"), SecondaryTweenInfo, {Color = getColorByGood("ping", ping)}):Play()
+	end
+end)
 
 local mouse = game.Players.LocalPlayer:GetMouse()
 
@@ -2703,6 +2846,8 @@ local function toggleAudio()
 	end
 end
 
+
+
 local listone = charinter:WaitForChild("List1")
 local listtwo = charinter:WaitForChild("List2")
 
@@ -2774,7 +2919,7 @@ end)
 
 local keystrokes = LunarHub:WaitForChild("KeystrokesUI")
 
-keystrokes.ZIndex = 1
+keystrokes.ZIndex = -1
 
 --toggling
 
@@ -2874,6 +3019,16 @@ task.spawn(function()
 	end
 end)
 
+LunarHub.Taskbar.FirstTime.Visible = true
+HomeUI.FirstTime.Visible = true
+LunarHub.Taskbar.FirstTime.Text = "TAP '" .. string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14) .. "' TO OPEN/CLOSE"
+LunarHub.Taskbar.FirstTime.TextColor3 = Color3.fromRGB(200,200,200)
+HomeUI.FirstTime.Text = "TAP '" .. string.sub(tostring(LunarHubSettings.HomeKeybind), 14) .. "' TO OPEN/CLOSE"
+HomeUI.FirstTime.TextColor3 = Color3.fromRGB(225,225,225)
+HomeUI.FirstTime.AnchorPoint = Vector2.new(0.5,0)
+HomeUI.FirstTime.Position = UDim2.new(0.5,0,HomeUI.FirstTime.Position.Y.Scale, HomeUI.FirstTime.Position.Y.Offset)
+HomeUI.FirstTime.TextXAlignment = Enum.TextXAlignment.Center
+
 if _G.LunarHubDebugMode == true then
 	notifyUser("HomeKey: " .. tostring(LunarHubSettings.HomeKeybind), true)
 	notifyUser("TaskKey: " .. tostring(LunarHubSettings.TaskbarKeybind), true)
@@ -2915,6 +3070,12 @@ end)
 local exec = LunarHub:WaitForChild("Executor")
 local luainput = exec:WaitForChild("LineScroll"):WaitForChild("LuaInput")
 
+UIS.InputBegan:Connect(function(input)
+	if UIS:IsKeyDown(Enum.KeyCode.LeftControl) and input.KeyCode == Enum.KeyCode.Q then
+		exec.Visible = not exec.Visible
+	end
+end)
+
 exec:WaitForChild("Execute").MouseButton1Click:Connect(function()
 	local success, err = pcall(function()
 		loadstring(luainput.Text)()
@@ -2924,7 +3085,6 @@ exec:WaitForChild("Execute").MouseButton1Click:Connect(function()
 		notifyUser("Successfully executed script from LunarExecutor!", true)
 	elseif not success and err then
 		notifyUser("Failed to execute script from LunarExecutor - Error message shown in Dev Console [F9]!", false)
-		warn("LunarHub // LunarExecutor // Failed to execute script - Error Message:\n" .. err)
 	end
 end)
 
