@@ -97,7 +97,7 @@ local LunarHub = LoadCustomInstance(LunarHubUI_URL)
 --[[ yielding so that no errors mid-script, this will change if i find a different way to do this ]]--
 
 local yield = LunarHub:WaitForChild("Home"):WaitForChild("Interactions"):WaitForChild("Server"):WaitForChild("Players")
-local second_Yield = LunarHub:WaitForChild("Playerlist"):WaitForChild("Interactions"):WaitForChild("List"):WaitForChild("Template"):WaitForChild("Interactions"):WaitForChild("Teleport"):WaitForChild("Shadow"):WaitForChild("UICorner")
+local second_Yield = LunarHub:WaitForChild("Playerlist"):WaitForChild("Interactions"):WaitForChild("List"):WaitForChild("Template"):WaitForChild("Interactions"):WaitForChild("Teleport"):WaitForChild("Shadow"):WaitForChild("UICorner", 20)
 
 local additionalYield = 7.5
 
