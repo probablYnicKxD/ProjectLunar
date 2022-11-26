@@ -28,5 +28,38 @@ You can load a script file using the `lunar.load` function. It takes in the argu
 ```lua
 print(lunar.load("test.txt")) --prints the test.txt's contents, in this case "This is a test file!"
 ```
+### Detecting when a player chats
+You can detect when a player chats using the `lunar.onplayerchatted` function.
+```lua
+lunar.onplayerchatted:Connect(function(data)
+  local msg = data.Message
+  local speaker = data.FromSpeaker
+  print(speaker .. ": " .. msg)
+end)
+```
+
+## Signals
+### Creating a Signal
+You can load a script file using the `lunar.createsignal` function.
+```lua
+local mySignal = lunar.createsignal()
+```
+### Firing a created Signal
+You can fire a signal using the `lunarsignal:Fire` function.
+```lua
+mySignal:Fire(args)
+```
+### Connecting a function to a created Signal
+You can connect a function to your signal by using the `lunarsignal:Connect` function.
+```lua
+local myConnection = mySignal:Connect(function(args)
+  --stuff
+end)
+```
+### Disconnecting a connection from a created Signal
+You can disconnected a created function using the `lunarconnection:Disconnect` function.
+```lua
+myConnection:Disconnect()
+```
 
 ## More coming soon!
