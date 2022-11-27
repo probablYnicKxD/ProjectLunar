@@ -79,7 +79,6 @@ local editorObj = {
 }
 
 function fakeEditor.new(editor)
-	setmetatable({Editor = editor}, {__index = editorObj})
 	return editorObj
 end
 
