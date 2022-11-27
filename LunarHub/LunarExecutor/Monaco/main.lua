@@ -68,7 +68,6 @@ function module.new(frame)
 	highlightBox.Text = ""
 	highlightBox.Parent = textbox
 	
-	editorObj:SetTheme("default")
 	textFixer.Fix(highlightBox)
 	suggestions:Start(newEditor)
 
