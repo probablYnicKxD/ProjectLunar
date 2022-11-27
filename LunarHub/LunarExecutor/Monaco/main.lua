@@ -92,7 +92,7 @@ function module.new(frame)
 		end
 	end)
 
-	return editorObj
+	return editorObj, newEditor
 end
 
 return module
