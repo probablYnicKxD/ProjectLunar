@@ -1,8 +1,12 @@
 local module = {}
 
-local lexer 	= require(script.Parent.Lexer)
-local theme 	= require(script.Parent.Theme)
-local textFixer = require(script.Parent.TextFixer)
+local function getm(mod)
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/LunarExecutor/Monaco/" .. mod .. ".lua"))()
+end
+
+local lexer 	= getm("Lexer")
+local theme 	= getm("Theme")
+local textFixer = getm("TextFixer")
 
 local function ColorToFont(text, color)
 	return string.format(
