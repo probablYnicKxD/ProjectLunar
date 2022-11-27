@@ -1,8 +1,12 @@
 local fakeEditor = {} -- Main module
 
-local textFixer = require(script.Parent.TextFixer)
-local theme = require(script.Parent.Theme)
-local syntax = require(script.Parent.Syntax)
+local function getm(mod)
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/LunarExecutor/Monaco/" .. mod .. ".lua"))()
+end
+
+local textFixer = getm("TextFixer")
+local theme = getm("Theme")
+local syntax = getm("Syntax")
 
 local editorObj = {
 	SetTextSize = function(self, textSize)
