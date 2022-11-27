@@ -1,5 +1,4 @@
 local theme = {
-	current = nil,
 	themes = {
 		["default"] = {
 			["keyword"] = Color3.fromRGB(248, 109, 124),
@@ -19,5 +18,7 @@ local theme = {
 		}
 	}
 }
+
+theme.current = theme.themes["extra 2"]
 
 return theme
