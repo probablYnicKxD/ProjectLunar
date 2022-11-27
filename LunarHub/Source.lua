@@ -1,6 +1,6 @@
 --[[
 
-  	LunarHub - Version 0.0.4 Alpha
+  	LunarHub - Version 0.0.5 Alpha
   	
   	open-source because i really don't care if you copy SOME parts of the script, just not all of it.
   	
@@ -18,9 +18,15 @@ local bootTime = os.time()
 
 warn("LunarHub // LunarHub is starting!")
 
+warn("LunarHub // Getting game data...")
+
+local gt = os.time()
+
 local CurrentGameInfoData = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
 
-local LunarHubVersion = "v0.0.4 Alpha"
+warn("LunarHub // Collected game data! MarketplaceService took " .. os.time() - gt .. " seconds to collect data.")
+
+local LunarHubVersion = "v0.0.5 Alpha"
 
 local LunarHubUI_URL = "https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarHub%20Interface%20-%20" .. LunarHubVersion .. ".rbxm?raw=true"
 
@@ -60,6 +66,10 @@ local function LoadCustomInstance(url)
 	end
 end
 
+local function strtokeycode(str)
+	return Enum.KeyCode[string.sub(str, 14)]
+end
+
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
 	if msg ~= "lunar:Destroy()" then return end
 
@@ -92,20 +102,18 @@ end
 
 warn("LunarHub // Loading UI...")
 
+local utime = os.time()
+
 local LunarHub = LoadCustomInstance(LunarHubUI_URL)
 
 --[[ yielding so that no errors mid-script, this will change if i find a different way to do this ]]--
 
 local yield = LunarHub:WaitForChild("Home"):WaitForChild("Interactions"):WaitForChild("Server"):WaitForChild("Players")
-local second_Yield = LunarHub:WaitForChild("Playerlist"):WaitForChild("Interactions"):WaitForChild("List"):WaitForChild("Template"):WaitForChild("Interactions"):WaitForChild("Teleport"):WaitForChild("Shadow"):WaitForChild("UICorner", 20)
+local second_Yield = LunarHub:WaitForChild("Playerlist"):WaitForChild("Interactions"):WaitForChild("List"):WaitForChild("Template"):WaitForChild("Interactions"):WaitForChild("Teleport"):WaitForChild("Shadow"):WaitForChild("UICorner")
 
-local additionalYield = 7.5
+repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG and LunarHub.Character and LunarHub.KeystrokesUI and LunarHub.SaveFile and LunarHub.OpenFile
 
-wait(additionalYield)
-
-repeat warn("LunarHub // Waiting for UI elements to load..."); wait(1) until LunarHub.Home and LunarHub.ProjectLunarBlur and LunarHub.Notifications and LunarHub.GameDetection and LunarHub.Playerlist and LunarHub.ScriptSearch and LunarHub.Scripts and LunarHub.Settings and LunarHub.Taskbar and LunarHub.Theme and LunarHub.ThemeImport and LunarHub.LunarLogo and LunarHub.QuickPlay and LunarHub.JoinCodes and LunarHub.DarkBG and LunarHub.Character and LunarHub.KeystrokesUI
-
-warn("LunarHub // UI loaded in " .. os.time() - bootTime .. " seconds")
+warn("LunarHub // UI loaded in " .. os.time() - utime .. " seconds")
 
 local LocalPlayer = game.Players.LocalPlayer
 
@@ -333,7 +341,7 @@ local function closeHome()
 	end
 
 	if taskbarOpen or OpenTaskbarOnClose then
-		TS:Create(LunarHub.Taskbar, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1,-12)}):Play()
+		TS:Create(LunarHub:WaitForChild("Taskbar", 20), SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1,-12)}):Play()
 		OpenTaskbarOnClose = false
 	end
 
@@ -589,17 +597,13 @@ local function loadConfiguration()
 
 		LunarHubSettings = {
 			Theme = configFile.Theme,
-			TaskbarKeybind = configFile.TaskbarKeybind,
-			HomeKeybind = configFile.HomeKeybind,
+			TaskbarKeybind = strtokeycode(configFile.TaskbarKeybind),
+			HomeKeybind = strtokeycode(configFile.HomeKeybind),
 			TimeFormat = configFile.TimeFormat,
 			ShowSeconds = configFile.ShowSeconds,
 		}
 
 		local set = SettingsUI.Settings
-
-		local function keybindToString(k)
-			return string.sub(tostring(k), 14)
-		end
 
 		local function toggleToColor(b)
 			if b == true then
@@ -617,8 +621,8 @@ local function loadConfiguration()
 			end
 		end
 
-		set.HomeKeybind.KeybindFrame.CurrentBind.Text = keybindToString(configFile.HomeKeybind)
-		set.TaskbarKeybind.KeybindFrame.CurrentBind.Text = keybindToString(configFile.TaskbarKeybind)
+		set.HomeKeybind.KeybindFrame.CurrentBind.Text = string.sub(configFile.HomeKeybind, 14)
+		set.TaskbarKeybind.KeybindFrame.CurrentBind.Text = string.sub(configFile.TaskbarKeybind, 14)
 		set.TimeToggle.Icon.ImageColor3 = toggleToColor(numToToggle(configFile.TimeFormat))
 		set.SecondsToggle.Icon.ImageColor3 = toggleToColor(configFile.ShowSeconds)
 	end
@@ -693,7 +697,7 @@ local function writesettings(newSettings)
 	local success, errMsg = pcall(function()
 		writefile(ConfigFolderName .. "/" .. ConfigFileName .. ".txt", newSettings)
 	end)
-	
+
 	LunarHub.Taskbar.FirstTime.Visible = true
 	HomeUI.FirstTime.Visible = true
 	LunarHub.Taskbar.FirstTime.Text = "TAP '" .. string.sub(tostring(LunarHubSettings.TaskbarKeybind), 14) .. "' TO OPEN/CLOSE"
@@ -1373,10 +1377,10 @@ local function refreshCustomLibrary()
 		if customScr.Games == "UNIVERSAL" then
 			new.Universal.Visible = true
 		end
-		
+
 		new.Execute.UIStroke.Color = Color3.fromRGB(0,255,0)
 		new.Execute.BackgroundColor3 = Color3.fromRGB(0,125,0)
-		
+
 		--[[
 		
 		local newstroke = Instance.new("UIStroke")
@@ -1564,11 +1568,11 @@ end
 local function makecustomscript(name, desc, games, loadstr)
 	task.spawn(function()
 		games = string.gsub(games, " ", "")
-	
+
 		if games ~= "UNIVERSAL" then
 			games = string.split(games, ",")
 		end
-		
+
 		local newTable = {
 			Name = name,
 			Description = desc,
@@ -1913,8 +1917,8 @@ local function getSettings()
 		newSettings.TimeFormat = 12
 	end
 
-	newSettings.TaskbarKeybind = LunarHubSettings.TaskbarKeybind
-	newSettings.HomeKeybind = LunarHubSettings.HomeKeybind
+	newSettings.TaskbarKeybind = tostring(LunarHubSettings.TaskbarKeybind)
+	newSettings.HomeKeybind = tostring(LunarHubSettings.HomeKeybind)
 
 	newSettings.Theme = ThemeUI.SelectedTheme.Value
 
@@ -2283,6 +2287,9 @@ local function openIdle()
 	closeQuickPlay()
 
 	ui.Visible = true
+
+	ui.Title.Text = "Don't worry, " .. game.Players.LocalPlayer.DisplayName .. "!"
+	ui.Subtitle.Text = "We're currently protecting you from getting disconnected."
 
 	TS:Create(LunarHub:WaitForChild("DarkBG"), SecondaryTweenInfo, {BackgroundTransparency = 0.7}):Play()
 	TS:Create(ui.Title, SecondaryTweenInfo, {TextTransparency = 0}):Play()
@@ -3067,8 +3074,18 @@ end)
 
 --[[ executor system ]]--
 
+notifyUser("Loading LunarExecutor...", true)
+
+local LunarExecutorAPI = game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/LunarExecutor/API.lua")
+
 local exec = LunarHub:WaitForChild("Executor")
-local luainput = exec:WaitForChild("LineScroll"):WaitForChild("LuaInput")
+
+--NOTICE! this monaco was NOT made by me/probablYnicK!
+
+local monaco = loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/LunarExecutor/Monaco/main.lua"))()
+monaco = monaco.new(exec:WaitForChild("Editor", 20))
+
+monaco:SetText("--LunarExecutor functions by probablYnicK \n --Monaco/Syntax Highlighting made by sleitnick and bread!")
 
 UIS.InputBegan:Connect(function(input)
 	if UIS:IsKeyDown(Enum.KeyCode.LeftControl) and input.KeyCode == Enum.KeyCode.Q then
@@ -3076,27 +3093,55 @@ UIS.InputBegan:Connect(function(input)
 	end
 end)
 
+exec:WaitForChild("Clear").MouseButton1Click:Connect(function()
+	monaco:SetText("")
+end)
+
+local openfile = exec.Clear:Clone()
+openfile.Position = UDim2.new(exec.Clear.Position.X.Scale, exec.Clear.Position.X.Offset + (exec.Clear.Position.X.Offset - exec.Execute.Position.X.Offset), exec.Clear.Position.Y.Scale, exec.Clear.Position.Y.Offset)
+openfile.Text = "OPEN FILE"
+openfile.MouseButton1Click:Connect(function()
+	local prompt = LunarHub:WaitForChild("OpenFile", 2)
+	local otherprompt = LunarHub:WaitForChild("SaveFile", 2)
+
+	if prompt then
+		TS:Create(prompt, SecondaryTweenInfo, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+		TS:Create(otherprompt, SecondaryTweenInfo, {Position = UDim2.new(0.5, 0, 1.5, 0)}):Play()
+	else
+		notifyUser("Failed to open Open File prompt!", false)
+	end
+end)
+openfile.Parent = exec
+
+local savefile = openfile:Clone()
+savefile.Position = UDim2.new(openfile.Position.X.Scale, openfile.Position.X.Offset + (exec.Clear.Position.X.Offset - exec.Execute.Position.X.Offset), openfile.Position.Y.Scale, openfile.Position.Y.Offset)
+savefile.Text = "SAVE FILE"
+savefile.MouseButton1Click:Connect(function()
+	if not isfolder("LunarExecutor Saved Scripts") then makefolder("LunarExecutor Saved Scripts") end
+
+	local prompt = LunarHub:WaitForChild("SaveFile", 2)
+	local otherprompt = LunarHub:WaitForChild("OpenFile", 2)
+
+	if prompt then
+		TS:Create(prompt, SecondaryTweenInfo, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+		TS:Create(otherprompt, SecondaryTweenInfo, {Position = UDim2.new(0.5, 0, 1.5, 0)}):Play()
+	else
+		notifyUser("Failed to open Save File prompt!", false)
+	end
+end)
+savefile.Parent = exec
+
 exec:WaitForChild("Execute").MouseButton1Click:Connect(function()
 	local success, err = pcall(function()
-		loadstring(luainput.Text)()
+		loadstring(LunarExecutorAPI .. "; " .. monaco:GetText())()
 	end)
 
 	if success then
 		notifyUser("Successfully executed script from LunarExecutor!", true)
 	elseif not success and err then
 		notifyUser("Failed to execute script from LunarExecutor - Error message shown in Dev Console [F9]!", false)
+		error("LunarExecutor - Failed to execute script - Error Message:\n" .. err)
 	end
-end)
-
-UIS.InputBegan:Connect(function(input)
-	if (input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.KeypadEnter) and luainput:IsFocused() == true then
-		luainput.Parent.CanvasSize = UDim2.new(luainput.Parent.CanvasSize.X.Scale, luainput.Parent.CanvasSize.X.Offset, luainput.Parent.CanvasSize.Y.Scale, luainput.Parent.CanvasSize.Y.Offset + luainput.TextBounds.Y)
-	end
-end)
-
-exec:WaitForChild("Clear").MouseButton1Click:Connect(function()
-	luainput.Text = ""
-	luainput.Parent.CanvasSize = UDim2.new(0,0,0,0)
 end)
 
 exec:WaitForChild("Close").MouseButton1Click:Connect(function()
@@ -3106,6 +3151,60 @@ end)
 TaskbarUI:WaitForChild("Buttons"):WaitForChild("Executor"):WaitForChild("Interact").MouseButton1Click:Connect(function()
 	exec.Position = UDim2.new(0.5,0,0.5,0)
 	exec.Visible = not exec.Visible
+end)
+
+--[[ save and open file ]]--
+
+local sfprompt = LunarHub:WaitForChild("SaveFile", 20)
+local ofprompt = LunarHub:WaitForChild("OpenFile", 20)
+
+sfprompt:WaitForChild("Layer"):WaitForChild("Save").MouseButton1Click:Connect(function()
+	local savefilenameinput = sfprompt.Layer.Input
+
+	if savefilenameinput.Text == "" then
+		notifyUser("You must input a file name!", false)
+		return
+	end
+
+	writefile("LunarExecutor Saved Scripts/" .. savefilenameinput.Text, monaco:GetText())
+	notifyUser("Saved script to " .. UserExecutor .. "/workspace/LunarExecutor Saved Scripts/" .. savefilenameinput.Text .. "!", true)
+end)
+
+sfprompt:WaitForChild("Layer"):WaitForChild("Close").MouseButton1Click:Connect(function()
+	TS:Create(sfprompt, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1.5,0)}):Play()
+end)
+
+ofprompt:WaitForChild("Layer"):WaitForChild("Close").MouseButton1Click:Connect(function()
+	TS:Create(ofprompt, SecondaryTweenInfo, {Position = UDim2.new(0.5,0,1.5,0)}):Play()
+end)
+
+ofprompt:WaitForChild("Layer"):WaitForChild("Open").MouseButton1Click:Connect(function()
+	local openfilenameinput = ofprompt.Layer.Input
+
+	if openfilenameinput.Text == "" then
+		notifyUser("You must input a file name!", false)
+		return
+	end
+
+	local filefound = isfile(openfilenameinput.Text)
+	if not filefound then
+		notifyUser("Failed to open file - Could not find " .. openfilenameinput.Text .. " in your executor's workspace folder!", false)
+		return
+	else
+		local filecontents = readfile(openfilenameinput.Text)
+		if filecontents then
+			local s, e = pcall(function()
+				monaco:SetText(tostring(filecontents))
+			end)
+
+			if s then
+				notifyUser("Successfully opened " .. openfilenameinput.Text .. "!", true)
+			elseif not s and e then
+				notifyUser("Failed to open " .. openfilenameinput.Text .. " - Error Message shown in Dev Console [F9]", false)
+				warn("LunarHub - LunarExecutor // Failed to open " .. openfilenameinput.Text .. " - Error Message:\n" .. e)
+			end
+		end
+	end
 end)
 
 --[[ Dragging ]]--
@@ -3145,6 +3244,8 @@ task.spawn(function()
 		end
 	end)
 end)
+
+notifyUser("Loaded LunarExecutor!", true)
 
 --Keystrokes
 
