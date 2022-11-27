@@ -1256,6 +1256,8 @@ end)
 local scriptLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/ScriptLibrary.lua"))()
 
 local function refreshScriptLibrary()
+	scriptLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/ScriptLibrary.lua"))()
+	
 	local template = LunarHub.ScriptSearch.List.Template
 
 	for i, scr in pairs(LunarHub.ScriptSearch.List:GetChildren()) do
