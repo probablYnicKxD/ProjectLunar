@@ -11,16 +11,40 @@
 
 local module = {}
 
-local syntax 	   = require(script.Syntax)
-local getLines 	   = require(script.GetLines)
-local fakeEditor   = require(script.FakeEditor)
-local textFixer    = require(script.TextFixer)
-local getLine 	   = require(script.GetLine)
-local tween 	   = require(script.TweenLibrary)
-local suggestions  = require(script.Suggestions)
+local function getm(mod)
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/LunarExecutor/Monaco/" .. mod .. ".lua"))()
+end
+
+local syntax 	   = getm("Syntax")
+local getLines 	   = getm("GetLines")
+local fakeEditor   = getm("FakeEditor")
+local textFixer    = getm("TextFixer")
+local getLine 	   = getm("GetLine")
+local tween 	   = getm("TweenLibrary")
+local suggestions  = getm("Suggestions")
+
+local GetAsset = getsynasset or getcustomasset
+
+local function LoadCustomInstance(url)
+	if url == "" then
+		return ""
+	elseif string.find(url, "rbxassetid://") or string.find(url, "roblox.com") or tonumber(url) then
+		local numberId = string.gsub(url, "%D", "")
+		return game:GetObjects("rbxassetid://".. numberId)[1]
+	else
+		local fileName = "customInstance_".. tick().. ".txt"
+		local instance = nil
+		writefile(fileName, game:HttpGet(url))
+		instance = game:GetObjects(GetAsset(fileName))[1]
+		delfile(fileName)
+
+		return instance
+	end
+end
 
 function module.new(frame)
-	local newEditor = script.Editor:Clone()
+	local newEditor = LoadCustomInstance("https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarExecutor/ScriptEditor.rbxm?raw=true")
+	repeat until newEditor:FindFirstChild("Scroll")
 	newEditor.Parent = frame
 
 	local editorObj  	= fakeEditor.new(newEditor)
