@@ -211,6 +211,23 @@ scripts.DexExplorer = {
 	}
 }
 
+scripts.SKIDWARE_FREE = {
+	Name = "SKID-WARE [FREE]",
+	Description = "Made by BLX and a sponsor of Project Lunar, SKID-WARE is a nice scripting utility that allows you to execute many universal scripts with the click of a button. It also features a custom admin console!",
+	LoadstringScript = "loadstring(game:HttpGet('https://raw.githubusercontent.com/SkidWareObfuscared/SSSs/main/Skid_Ware_Free0.0.1'))()",
+	SupportedGames = {},
+	MultipleGames = true,
+	Universal = true,
+	KeySys = true,
+	Creator = "blx",
+	Tags = {
+		"VerifiedScript",
+		"VerifiedCreator",
+		"PositiveReviews",
+		"CMD",
+	}
+}
+
 scripts.BetterBypasser = {
 	Name = "BetterBypasser",
 	Description = "A chat bypasser that bypasses the chat filter using unknown symbols. Execute it right here, right now, on LunarHub.",
