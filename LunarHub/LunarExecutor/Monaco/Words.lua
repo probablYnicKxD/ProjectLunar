@@ -31,6 +31,8 @@ local words = {
   ['else'] = 'keyword',
   ['return'] = 'keyword',
   ['local'] = 'keyword',
+	
+	['lunar'] = 'custom',
 }
 
 return words
