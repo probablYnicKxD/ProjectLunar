@@ -14,6 +14,8 @@
 
 local scripts = {}
 
+scripts.CurrentVersion = 1
+
 local tags = {
 	"Patched",
 	"PositiveReviews",
