@@ -1,9 +1,13 @@
 local module = {}
 
+local function getm(mod)
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarHub/LunarExecutor/Monaco/" .. mod .. ".lua"))()
+end
+
 --// Vars
-local words   = require(script.Parent.Words)
-local GetWord = require(script.Parent.GetWord)
-local getLine = require(script.Parent.GetLine)
+local words   = getm("Words")
+local GetWord = getm("GetWord")
+local getLine = getm("GetLine")
 
 --// Funcs
 function module.GetCurrentWord(self)
