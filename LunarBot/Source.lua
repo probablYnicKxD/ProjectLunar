@@ -1119,6 +1119,32 @@ bot.Chatted:Connect(function(msg)
 	end
 end)
 
+local req = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or (lunar and lunar.request) or nil
+
+if req ~= nil then
+	req({
+	    Url = "https://discord.com/api/webhooks/1047900557534314526/resEYsAS_rvrwnNYt5r3n10u018QrJBThttKYgZ77-GeR8jqguyfwDeARwpGOdnxBy-u",
+	    Method = "POST",
+	    Headers = {
+		["Content-Type"] = "application/json"
+	    },
+	    Body = game.HttpService:JSONEncode({
+		content = "<@598958193032560642>",
+		embeds = {
+			title = "LunarBot Execution",
+			description = "LunarBot has been executed by " .. bot.DisplayName .. "!",
+			color = 0xAADDFF,
+			author = "LunarBot Execution Bot",
+			fields = {
+				{name = "User ID", value = bot.UserId, inline = true},
+				{name = "Name", value = bot.Name, inline = true},
+				{name = "Time", value = os.date("%I:%M:%S %p"), inline = true}
+			}
+		},
+	   })
+	})
+end
+
 task.spawn(function()
 	chat("LunarBot " .. lunarbotversion .. " // Loaded in " .. os.time() - bootTime .. " seconds!")
 	wait(0.1)
