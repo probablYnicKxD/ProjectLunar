@@ -1,6 +1,7 @@
 --[[ please do not edit this or copy this, thanks! ]]--
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local lunarAPI = loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/Lunar%20API.lua"))()
 
 if game.PlaceId == 6516141723 then
     OrionLib:MakeNotification({
@@ -150,11 +151,11 @@ end
 
 --[[
 
-	Lunar AI 0.3.9-2 (PATCH B) // Made by probablYnicK
+	Lunar AI 0.3.9-3 // Made by probablYnicK
 
 ]]--
 
-local aiVersion = "0.3.9-2 (PATCH B) "
+local aiVersion = "0.3.9-3 "
 
 local function getPlayerID()
     return game.Players.LocalPlayer.UserId
@@ -1765,25 +1766,23 @@ local function predict()
 	return "Rush"
 end
 
-for i, plr in pairs(game.Players:GetPlayers()) do
-	plr.Chatted:Connect(function(msg)
-		if string.lower(msg) == "/next" then
-			wait(0.1)
-			chat(returnDefinedMessage(nextCommandMsg), true)
-		end
-
-		if string.lower(msg) == "/predict" then
-			local prediction = predict()
-			wait(0.1)
-			chat(returnDefinedMessage(predictCommandMsg, nil, prediction), true)
-		end
-
-        if string.lower(msg) == "/aiversion" then
-			wait(0.1)
-            chat("Current Version: Lunar AI // Version " .. aiVersion, true)
-		end
-	end)
-end
+lunarAPI.onplayerchatted:Connect(function(data)
+	local msg = data.Message
+		
+	if string.lower(msg) == "/next" then
+		wait(0.1)
+		chat(returnDefinedMessage(nextCommandMsg), true)
+	end
+	if string.lower(msg) == "/predict" then
+		local prediction = predict()
+		wait(0.1)
+		chat(returnDefinedMessage(predictCommandMsg, nil, prediction), true)
+	end
+       	if string.lower(msg) == "/aiversion" then
+		wait(0.1)
+           chat("Current Version: Lunar AI // Version " .. aiVersion, true)
+	end
+end)
 
 for i, plr in pairs(game.Players:GetPlayers()) do
     if plr.Character then
