@@ -16,12 +16,14 @@ end
 function lunar.protectui(ui)
 	if syn and syn.protect_gui then
 		syn.protect_gui(ui)
+		ui.Parent = gethui() or game.CoreGui
 		return true
 	elseif protect_gui then
 		protect_gui(ui)
+		ui.Parent = gethui() or game.CoreGui
 		return true
 	else
-		error("LunarExecutor // The executor that LunarExecutor is being used on does not support protect_gui!")
+		warn("LunarExecutor // The executor that LunarExecutor is being used on does not support protect_gui!")
 		return false
 	end
 end
