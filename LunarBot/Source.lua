@@ -22,6 +22,12 @@ local allwhitelisted = _G.defaultAllWhitelisted or false --set to true if you wa
 local randommoveinteger = _G.defaultRandomMoveInteger or 15 --interval in which how long randommove waits until choosing another direction
 local prefix = _G.defaultPrefix or "." --DO NOT SET TO MORE THAN 1 CHARACTER!
 
+if _G.preWhitelisted and type(_G.preWhitelisted) == "table" then
+	for i, v in pairs(_G.preWhitelisted) do
+		table.insert(whitelisted, v)
+	end
+end
+
 if prefix:len() > 1 then
 	warn("LunarBot // Prefix cannot be more than 1 character long!")
 	return
