@@ -94,5 +94,6 @@ addGame("PLS DONATE", 8737602449, "haz3mn")
 addGame("3008", 2768379856, "uglyburger0")
 addGame("Plane Crazy", 166986752, "madattak")
 addGame("a literal baseplate.", 4483381587, "evilitself")
+addGame("RUNNING FROM THE INTERNET", 11195100561, "SYSTEM_32")
 
 return quickPlayGames
