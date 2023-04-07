@@ -95,5 +95,7 @@ addGame("3008", 2768379856, "uglyburger0")
 addGame("Plane Crazy", 166986752, "madattak")
 addGame("a literal baseplate.", 4483381587, "evilitself")
 addGame("RUNNING FROM THE INTERNET", 11195100561, "SYSTEM_32")
+addGame("Strucid", 2377868063, "Frosted Studio")
+addGame("Tropical Royale", 10351562025, "SirSkittles")
 
 return quickPlayGames
