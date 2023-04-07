@@ -211,6 +211,24 @@ scripts.DexExplorer = {
 	}
 }
 
+scripts.LunarBot = {
+	Name = "LunarBot",
+	Description = "A custom self-bot script made by probablYnicK, the creator of Project Lunar. This has only been tested in the game, 'a literal baseplate.', and may get you banned. Use at your own risk!",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/probablYnicKxD/ProjectLunar/main/LunarBot/Source.lua"))()',
+	SupportedGames = {},
+	MultipleGames = true,
+	Universal = true,
+	KeySys = false,
+	Creator = "probablYnicK",
+	Tags = {
+		"ProjectLunar",
+		"New!",
+		"PositiveReviews",
+		"VerifiedCreator",
+		"VerifiedScript",
+	}
+}
+
 scripts.SKIDWARE_FREE = {
 	Name = "SKID-WARE [FREE]",
 	Description = "Made by BLX and a sponsor of Project Lunar, SKID-WARE is a nice scripting utility that allows you to execute many universal scripts with the click of a button. It also features a custom admin console!",
