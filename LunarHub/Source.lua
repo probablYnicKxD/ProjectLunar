@@ -810,7 +810,7 @@ local function refreshPlayerList()
 			local newHighlight = Instance.new("Highlight")
 
 			if plr.Character then
-				newHighlight.Parent = plr.Character
+				newHighlight.Parent = game.CoreGui
 
 				newHighlight.Archivable = true
 				newHighlight.Adornee = plr.Character
@@ -2762,7 +2762,7 @@ local function newESP(plr)
 	local newHighlight = Instance.new("Highlight")
 
 	if plr.Character then
-		newHighlight.Parent = plr.Character
+		newHighlight.Parent = game.CoreGui
 
 		newHighlight.Archivable = true
 		newHighlight.Adornee = plr.Character
@@ -2800,10 +2800,8 @@ local function enableESP()
 end
 
 local function disableESP()
-	for i, plr in pairs(game.Players:GetPlayers()) do
-		if plr.Character and plr.Character:FindFirstChild("LunarHubESPHighlight") then
-			plr.Character.LunarHubESPHighlight:Destroy()
-		end
+	for i, obj in pairs(game.CoreGui:GetChildren()) do
+		if obj.Name == "LunarHubESPHighlight" then obj:Destroy() end
 	end
 
 	if addedconnection then
