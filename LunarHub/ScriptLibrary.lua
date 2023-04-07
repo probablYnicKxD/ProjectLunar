@@ -127,6 +127,40 @@ scripts.EvadeReal_King = {
 	}
 }
 
+
+
+scripts.HitboxExtender = {
+	Name = "Hitbox Extender",
+	Description = "Get an amazing advantage in any shooting game with this amazing hitbox expander. Verified and tested by nicK.",
+	LoadstringScript = "loadstring(game:HttpGet('https://pastebin.com/raw/J9bj6TuD'))()",
+	SupportedGames = {},
+	KeySys = false,
+	MultipleGames = true,
+	Universal = true,
+	Creator = "Unknown",
+	Tags = {
+		"VerifiedScript",
+		"PositiveReviews",
+		"VerifiedCreator",
+	}
+}
+
+scripts.DarkHub = {
+	Name = "Dark Hub",
+	Description = "One of the best universal scripts on Roblox. Execute it right here, right now, on LunarHub.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/RandomAdamYT/DarkHub/master/Init", true))()',
+	SupportedGames = {},
+	KeySys = true,
+	MultipleGames = true,
+	Universal = true,
+	Creator = "Unknown",
+	Tags = {
+		"VerifiedScript",
+		"PositiveReviews",
+		"VerifiedCreator",
+	}
+}
+
 scripts.Vynixius_DOORS = {
 	Name = "Vynixius",
 	Description = "Destroy the entities and conquer door 100 in DOORS by LSPLASH with this amazing script by RegularVynixu!",
