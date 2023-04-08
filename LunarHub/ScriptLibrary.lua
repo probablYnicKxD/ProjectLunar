@@ -127,7 +127,21 @@ scripts.EvadeReal_King = {
 	}
 }
 
-
+scripts.Pissware = {
+	Name = "Pissware V4",
+	Description = "An amazing universal script with features for your every need. Verified and tested by nicK.",
+	LoadstringScript = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/AnAvaragelilmemer/Pissware/main/Main/main.lua"))()',
+	SupportedGames = {},
+	KeySys = false,
+	MultipleGames = true,
+	Universal = true,
+	Creator = "AnAvaragelilmemer",
+	Tags = {
+		"VerifiedScript",
+		"PositiveReviews",
+		"VerifiedCreator",
+	}
+}
 
 scripts.HitboxExtender = {
 	Name = "Hitbox Extender",
