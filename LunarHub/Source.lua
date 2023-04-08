@@ -910,7 +910,7 @@ inter.GitHub.Button.Interact.MouseButton1Click:Connect(function()
 end)
 
 inter.Discord.Button.Interact.MouseButton1Click:Connect(function()
-	setclipboard("https://discord.io/LunarCrocs")
+	setclipboard("https://discord.gg/dx92BUtqQJ")
 end)
 
 local localPlayer = game.Players.LocalPlayer
