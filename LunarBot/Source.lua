@@ -1,7 +1,12 @@
 local bootTime = os.time()
 local disconnected = false
 
+local altctrl = _G.ALTCTRL or false
+local SPIN_POWER = 100
+local FLOAT_HEIGHT = 9
+
 local bot = game.Players.LocalPlayer
+local HH = bot.Character.Humanoid.HipHeight
 
 for i, plr in pairs(game.Players:GetPlayers()) do
 	for i, obj in pairs(plr:GetChildren()) do
@@ -102,8 +107,25 @@ local commandsMessage = {
 	"cmds, reset, say <message>, pick <options>, dance, whitelist <player>, blacklist <player>, coinflip, random <min> <max>, bring, walkto <player>, setprefix <newPrefix>",
 	"setstatus <newStatus>, clearStatus, point, wave, funfact, time, speed, fps, sit, rush, randommove, randomplayer, rickroll, disablecommand <command>, jump, follow, unfollow",
 	"salute, announce <announcement>, help <command>, jobid, aliases <command>, math <operation> <nums>, changelogs, gamename, playercount, maxplayers, toggleall, setinterval, executor",
-	"lua <lua>, ping, catch <player>, copychat <player>, cheer, stadium",
+	"lua <lua>, ping, catch <player>, copychat <player>, cheer, stadium, spin <speed>, orbit <speed> <radius>, float <height>",
 }
+
+local orbitcon
+
+local function orbit(origin, speed, radius)
+	local r = radius or 10
+	local rps = speed or math.pi
+	local orbiter = bot.Character.HumanoidRootPart
+	local angle = 0
+	orbitcon = game:GetService("RunService").Heartbeat:Connect(function(dt)
+		angle = (angle + dt * rps) % (2 * math.pi)
+		orbiter.CFrame = origin * CFrame.new(math.cos(angle) * r, 0, math.sin(angle) * r)
+	end)
+end
+
+local function unorbit()
+	orbitcon:Disconnect()
+end
 
 local commands --don't change, could lead to errors
 
@@ -421,7 +443,7 @@ commands = {
 			
 			if not speakerplayer then return end
 			
-			chat(speakerplayer.DisplayName .. ": " .. tosay)
+			if altctrl then chat(tosay) else chat(speakerplayer.DisplayName .. ": " .. tosay) end
 		end,
 	},
 	pick = {
@@ -1054,6 +1076,98 @@ commands = {
 			end)
 		end,
 	},
+	altcontrol = {
+		Name = "altcontrol",
+		Aliases = {"altctrl"},
+		Use = "Removes the name from the .say command.",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				altctrl = true
+			end)
+		end,
+	},
+	spin = {
+		Name = "spin",
+		Aliases = {"rotate"},
+		Use = "Makes the bot spin!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				local pwr = 100
+				
+				if args[2] and tonumber(args[2]) then pwr = tonumber(args[2]) end
+			
+				local spinner = Instance.new("BodyThrust")
+				spinner.Name = "Spinner"
+				spinner.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+				spinner.Force = Vector3.new(pwr,0,pwr)
+				spinner.Location = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+			end)
+		end,
+	},
+	unspin = {
+		Name = "unspin",
+		Aliases = {"unrotate"},
+		Use = "Stops the spinning bot!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				local spinner = game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("Spinner")
+				if spinner then spinner:Destroy() end
+			end)
+		end,
+	},
+	float = {
+		Name = "float",
+		Aliases = {"levitate"},
+		Use = "Floats the bot!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				local f = 9
+				if args[2] and tonumber(args[2]) then f = tonumber(args[2]) end
+				bot.Character.Humanoid.HipHeight = f
+			end)
+		end,
+	},
+	unfloat = {
+		Name = "unfloat",
+		Aliases = {"unlevitate"},
+		Use = "Unfloats the bot!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				bot.Character.Humanoid.HipHeight = HH
+			end)
+		end,
+	},
+	orbit = {
+		Name = "orbit",
+		Aliases = {"orbit"},
+		Use = "Orbits the bot around you!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				local player = game.Players:FindFirstChild(speaker)
+				
+				if not player then return end
+			
+				orbit(player.Character.HumanoidRootPart.CFrame, args[2] or nil, args[3] or nil)
+			end)
+		end,
+	},
+	unorbit = {
+		Name = "unorbit",
+		Aliases = {"unorbit"},
+		Use = "Halts the orbit!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				unorbit()
+			end)
+		end,
+	},
 }
 
 local cmdcon = messageDoneFiltering.OnClientEvent:Connect(function(data)
@@ -1112,7 +1226,7 @@ local cmdcon = messageDoneFiltering.OnClientEvent:Connect(function(data)
 			warn("Could not find command: " .. args[1] .. "!")
 		end
 	elseif speakerplayer == copychatplayer then
-		chat(speakerplayer.DisplayName .. ": " .. message)
+		if altctrl then chat(message) else chat(speakerplayer.DisplayName .. ": " .. message) end
 	end
 end)
 
