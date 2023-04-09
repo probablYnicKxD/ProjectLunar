@@ -40,7 +40,7 @@ end
 
 --[[ end configs, don't edit this especially if you have no idea what Lua is lmao ]]--
 
-local lunarbotversion = "v0.1.1 Public Beta Release"
+local lunarbotversion = "v0.1.2 Public Beta Release"
 local lunarbotchangelogs = "Added a few commands!"
 
 local gameData = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
@@ -107,17 +107,19 @@ local commandsMessage = {
 	"cmds, reset, say <message>, pick <options>, dance, whitelist <player>, blacklist <player>, coinflip, random <min> <max>, bring, walkto <player>, setprefix <newPrefix>",
 	"setstatus <newStatus>, clearStatus, point, wave, funfact, time, speed, fps, sit, rush, randommove, randomplayer, rickroll, disablecommand <command>, jump, follow, unfollow",
 	"salute, announce <announcement>, help <command>, jobid, aliases <command>, math <operation> <nums>, changelogs, gamename, playercount, maxplayers, toggleall, setinterval, executor",
-	"lua <lua>, ping, catch <player>, copychat <player>, cheer, stadium, spin <speed>, orbit <speed> <radius>, float <height>",
+	"lua <lua>, ping, catch <player>, copychat <player>, cheer, stadium, spin <speed>, float <height>, orbit <speed> <radius>, rejoin",
 }
 
 local orbitcon
 
-local function orbit(origin, speed, radius)
-	local r = radius or 10
-	local rps = speed or math.pi
+local function orbit(target, speed, radius)
+	local r = tonumber(radius) or 10
+	local rps = tonumber(speed) or math.pi
 	local orbiter = bot.Character.HumanoidRootPart
 	local angle = 0
 	orbitcon = game:GetService("RunService").Heartbeat:Connect(function(dt)
+		if not target.Character then return end
+		origin = target.Character.HumanoidRootPart.CFrame
 		angle = (angle + dt * rps) % (2 * math.pi)
 		orbiter.CFrame = origin * CFrame.new(math.cos(angle) * r, 0, math.sin(angle) * r)
 	end)
@@ -235,6 +237,25 @@ commands = {
 			
 			if hum then
 				hum.Health = 0
+			end
+		end,
+	},
+	rejoin = {
+		Name = "rejoin",
+		Aliases = {"rj"},
+		Use = "Rejoins LunarBot!",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			if speaker ~= bot.Name and altctrl == false then chat("Invalid permissions to rejoin.") return end
+		
+			if #game.Players:GetPlayers() <= 1 then
+				print("Rejoining (NEW SERVER)")
+				game.Players.LocalPlayer:Kick("\nLunarBot - Rejoining...")
+				wait()
+				game:GetService('TeleportService'):Teleport(game.PlaceId, game.Players.LocalPlayer)
+			else
+				print("LunarBot is rejoining...")
+				game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 			end
 		end,
 	},
@@ -1084,6 +1105,7 @@ commands = {
 		CommandFunction = function(msg, args, speaker)
 			pcall(function()
 				altctrl = true
+				chat("Enabled alt control mode!")
 			end)
 		end,
 	},
@@ -1097,6 +1119,10 @@ commands = {
 				local pwr = 100
 				
 				if args[2] and tonumber(args[2]) then pwr = tonumber(args[2]) end
+			
+				local already = bot.Character.HumanoidRootPart:FindFirstChild("Spinner")
+				
+				if already then already:Destroy() end
 			
 				local spinner = Instance.new("BodyThrust")
 				spinner.Name = "Spinner"
@@ -1153,7 +1179,7 @@ commands = {
 				
 				if not player then return end
 			
-				orbit(player.Character.HumanoidRootPart.CFrame, args[2] or nil, args[3] or nil)
+				orbit(player, args[2], args[3])
 			end)
 		end,
 	},
