@@ -1124,11 +1124,11 @@ commands = {
 				
 				if already then already:Destroy() end
 			
-				local spinner = Instance.new("BodyThrust")
+				local spinner = Instance.new("BodyAngularVelocity")
 				spinner.Name = "Spinner"
 				spinner.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
-				spinner.Force = Vector3.new(pwr,0,pwr)
-				spinner.Location = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+				spinner.MaxTorque = Vector3.new(0,math.huge,0)
+				spinner.AngularVelocity = Vector3.new(0,pwr,0)
 			end)
 		end,
 	},
