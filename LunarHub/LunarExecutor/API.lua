@@ -1,7 +1,7 @@
 lunar = {}
 
 function lunar.chat(msg)
-	game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+	game:GetService("TextChatService"):WaitForChild("TextChannels"):WaitForChild("RBXGeneral"):SendAsync(msg)
 end
 
 function lunar.getexecutor(includelunar)
