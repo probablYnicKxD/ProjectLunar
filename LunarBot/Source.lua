@@ -61,9 +61,9 @@ local TI = TweenInfo.new(
 
 local function chat(msg)
 	if showbotchat == true then
-		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("[LunarBot]: " .. msg, "All")
+		game.TextChatService.TextChannels.RBXGeneral:SendAsync("[LunarBot]: " .. msg)
 	else
-		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+		game.TextChatService.TextChannels.RBXGeneral:SendAsync(msg)
 	end
 end
 
@@ -100,14 +100,13 @@ local funfacts = {
 	"Water makes different sounds depending on its temperature.",
 }
 
-local chatEvents = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents")
-local messageDoneFiltering = chatEvents:WaitForChild("OnMessageDoneFiltering")
+local messageReceived = game.TextChatService.TextChannels.RBXGeneral.MessageReceived
 
 local commandsMessage = {
-	"cmds, reset, say <message>, pick <options>, dance, whitelist <player>, blacklist <player>, coinflip, random <min> <max>, bring, walkto <player>, setprefix <newPrefix>",
-	"setstatus <newStatus>, clearStatus, point, wave, funfact, time, speed, fps, sit, rush, randommove, randomplayer, rickroll, disablecommand <command>, jump, follow, unfollow",
-	"salute, announce <announcement>, help <command>, jobid, aliases <command>, math <operation> <nums>, changelogs, gamename, playercount, maxplayers, toggleall, setinterval, executor",
-	"lua <lua>, ping, catch <player>, copychat <player>, cheer, stadium, spin <speed>, float <height>, orbit <speed> <radius>, rejoin",
+	"cmds, reset, say <message>, pick <options>, dance, whitelist <player>, blacklist <player>, coinflip, random <min> <max>, bring, walkto <player>",
+	"setprefix <newPrefix>, setstatus <newStatus>, clearStatus, point, wave, funfact, time, speed, fps, sit, rush, randommove, randomplayer, rickroll, disablecommand <command>",
+	"salute, announce <announcement>, help <command>, jobid, aliases <command>, math <operation> <nums>, changelogs, gamename, playercount, maxplayers, toggleall, setinterval",
+	"lua <lua>, ping, catch <player>, copychat <player>, cheer, stadium, spin <speed>, float <height>, orbit <speed> <radius>, jump, follow, unfollow, executor",
 }
 
 local orbitcon
@@ -1196,11 +1195,12 @@ commands = {
 	},
 }
 
-local cmdcon = messageDoneFiltering.OnClientEvent:Connect(function(data)
-	local message = data.Message
-	local speaker = data.FromSpeaker
+
+local cmdcon = messageReceived:Connect(function(data)
+	local message = data.Text
 	
-	local speakerplayer = game.Players:FindFirstChild(speaker)
+	local speakerplayer = game.Players:GetPlayerByUserId(data.TextSource.UserId)
+    local speaker = speakerplayer.Name
 	
 	if not speakerplayer then return end
 
