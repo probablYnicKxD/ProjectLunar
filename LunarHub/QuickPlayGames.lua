@@ -64,6 +64,7 @@ local function addGame(name, gameID, gameCreator)
 end
 
 addGame("DOORS 👁", 6516141723, "LSPLASH")
+addGame("ER:LC", 2534724415, "Police Roleplay Community")
 addGame("SolarPin Bowling", 14883941981, "probablYnicK")
 addGame("Evade", 9872472334, "Hexagon Development Community")
 addGame("Adopt Me!", 920587237, "DreamCraft")
