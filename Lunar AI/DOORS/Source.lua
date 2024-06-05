@@ -1530,7 +1530,7 @@ end
 
 local function chat(msg, alert)
     if SECRETEDITION == false then
-        game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+        game.TextChatService.TextChannels.RBXGeneral:SendAsync(msg, "All")
     end
     
     if alert then
@@ -1767,7 +1767,7 @@ local function predict()
 end
 
 lunarAPI.onplayerchatted:Connect(function(data)
-	local msg = data.Message
+	local msg = data.Text
 		
 	if string.lower(msg) == "/next" then
 		wait(0.1)
