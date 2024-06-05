@@ -26,13 +26,15 @@ local CurrentGameInfoData = game:GetService("MarketplaceService"):GetProductInfo
 
 warn("LunarHub // Collected game data! MarketplaceService took " .. os.time() - gt .. " seconds to collect data.")
 
-local LunarHubVersion = "v0.0.5 Alpha"
+local LunarHubVersion = "v0.0.6 Alpha"
 
 local LunarHubUI_URL = "https://github.com/probablYnicKxD/ProjectLunar/blob/main/LunarHub/LunarHub%20Interface%20-%20" .. LunarHubVersion .. ".rbxm?raw=true"
 
 local UserExecutor = identifyexecutor() or "Unknown"
 
-if not isfile and delfile and writefile and readfile and listfiles and makefolder and isfolder and setclipboard and (getsynasset or getcustomasset) then
+local GetAsset = getsynasset or getcustomasset
+
+if (not isfile) or (not delfile) or (not writefile) or (not readfile) or (not listfiles) or (not makefolder) or (not isfolder) or (not setclipboard) or (not GetAsset) then
 	warn("LunarHub // " .. UserExecutor .. " is not supported! Please get another executor, or use the recommended executor, Comet 3.")
 
 	local new = Instance.new("Message", game.Workspace)
@@ -47,19 +49,23 @@ end
 
 --credits to RegularVynixiu for this asset loading stuff lol
 
-local GetAsset = getsynasset or getcustomasset
-
 local function LoadCustomInstance(url)
 	if url == "" then
+        print("empty")
 		return ""
 	elseif string.find(url, "rbxassetid://") or string.find(url, "roblox.com") or tonumber(url) then
+        print("found rbxassetid or roblox.com or was a number: " .. url)
 		local numberId = string.gsub(url, "%D", "")
-		return game:GetObjects("rbxassetid://".. numberId)[1]
+		return game:GetObjects("https://roblox.com/asset/?id=" .. numberId)[1]
 	else
+        print("loading as new file")
 		local fileName = "customInstance_".. tick().. ".txt"
 		local instance = nil
-		writefile(fileName, game:HttpGet(url))
-		instance = game:GetObjects(GetAsset(fileName))[1]
+		local new = writefile(fileName, game:HttpGet(url))
+        print("before")
+		instance = game:GetObjects("https://roblox.com/asset/?id=17737511572")[1]
+        print("after")
+        wait(5)
 		delfile(fileName)
 
 		return instance
